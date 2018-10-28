@@ -61,14 +61,11 @@ public class SocketHandler implements Runnable {
                     in.close();
                     inFromClient.close();
                 } else if (toUser.equals(SEARCH_MSG)) {
-
-                    //create new thread that has inf while loop that receives
                     ReceiveFileNameThread t = new ReceiveFileNameThread(username, message, in);
                     t.start();
                     Thread.sleep(3000);
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
-
-                    //Send list to requester 
+                    Server.sendFileList(username, fileNamesToSend);
                 } else if (toUser.equals(FOUND_FILES)) {
                     //Server.fileNames.get( ).put(message, username);
                 } else if (toUser.equals(FILE_CHOSEN)) {

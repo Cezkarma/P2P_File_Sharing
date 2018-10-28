@@ -48,7 +48,7 @@ public class waitForMessage extends Thread {
                     break;
                 case '~'://
                     String search = Client.receiveMsg();
-                    //look for file 
+                    String fileNameFound = lookForFile(search);
                     //send filename
                     break;
                 case '$'://
@@ -62,5 +62,11 @@ public class waitForMessage extends Thread {
                     break;
             }
         }
+    }
+
+    private static String lookForFile(String search) {
+        String filename = "";
+
+        return filename;
     }
 }
