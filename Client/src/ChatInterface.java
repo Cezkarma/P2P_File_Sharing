@@ -27,6 +27,7 @@ import javax.swing.JTextField;
  * @author rabbp
  */
 public class ChatInterface extends javax.swing.JFrame {
+
     public static boolean connected = false;
     String username;
     String msg;
@@ -64,7 +65,7 @@ public class ChatInterface extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        searchText = new javax.swing.JTextArea();
         searchButton = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
         jLabel4 = new javax.swing.JLabel();
@@ -143,11 +144,16 @@ public class ChatInterface extends javax.swing.JFrame {
 
         jLabel3.setText("FILE SELECT AREA:");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        searchText.setColumns(20);
+        searchText.setRows(5);
+        jScrollPane1.setViewportView(searchText);
 
         searchButton.setText("SEARCH");
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchButtonActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("Download Progress:");
 
@@ -306,8 +312,8 @@ public class ChatInterface extends javax.swing.JFrame {
             username_txtActionPerformed(evt);
             IP_addrActionPerformed(evt);
             if (username.equals("All")) {
-                username = "All"+(int)(Math.random()*100);
-                JOptionPane.showMessageDialog(rootPane,"Cannot choose 'ALL' as your username. Your new Username is : " + username);
+                username = "All" + (int) (Math.random() * 100);
+                JOptionPane.showMessageDialog(rootPane, "Cannot choose 'ALL' as your username. Your new Username is : " + username);
             }
             Client.connect(serverName, username);
             reset_btn.setEnabled(true);
@@ -320,7 +326,7 @@ public class ChatInterface extends javax.swing.JFrame {
     private void msg_txtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msg_txtActionPerformed
         // TODO add your handling code here:
         msg = msg_txt.getText();
-        
+
     }//GEN-LAST:event_msg_txtActionPerformed
 
     private void disconnect_btnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnect_btnActionPerformed
@@ -339,7 +345,7 @@ public class ChatInterface extends javax.swing.JFrame {
         // TODO add your handling code here:
         dispose();
         Client.disconnect(username);
-        
+
     }//GEN-LAST:event_formWindowClosing
 
     //Closes all DataStreams and closes socket
@@ -369,6 +375,17 @@ public class ChatInterface extends javax.swing.JFrame {
         reset_btn.setEnabled(false);
 
     }//GEN-LAST:event_reset_btnActionPerformed
+
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        // TODO add your handling code here:
+        String search = searchText.getText();
+        try {
+            Client.sendMessage(search, "~");
+        } catch (IOException ex) {
+            Logger.getLogger(ChatInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_searchButtonActionPerformed
+
     //Prints the received message in the chat_txt
     public void printMsg(String msg, String FromWho) {
         Chat_txt.append(FromWho + ":" + msg + "\n");
@@ -383,12 +400,14 @@ public class ChatInterface extends javax.swing.JFrame {
         }
 
     }
+
     // Simply adds the new user to the dropdown list and to the list of connected clients
     public void addUsr(String usr) {
         users_txt.append(usr + "\n");
         chat_choice_dropdown.add(usr);
 
     }
+
     //Removes a disconnected user from the list of users and the dropodown list
     public void removeUsers(String user, String list_of_users) {
         List<String> tempList = Arrays.asList(list_of_users.split(","));
@@ -402,6 +421,7 @@ public class ChatInterface extends javax.swing.JFrame {
             addUsr(list.get(i));
         }
     }
+
     //This is called everytime a new user connects
     //It updates the user list and also the dropdown list
     //It updates the global list of users
@@ -428,6 +448,7 @@ public class ChatInterface extends javax.swing.JFrame {
             addUsr(list.get(i));
         }
     }
+
     //Checks if the IP entered is a valid IP address
     public static boolean checkIP(String ip) {
         boolean valid = false;
@@ -505,10 +526,10 @@ public class ChatInterface extends javax.swing.JFrame {
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JProgressBar jProgressBar2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField msg_txt;
     private javax.swing.JButton reset_btn;
     private javax.swing.JButton searchButton;
+    private javax.swing.JTextArea searchText;
     private javax.swing.JButton send_btn;
     private javax.swing.JTextField username_txt;
     private java.awt.TextArea users_txt;
