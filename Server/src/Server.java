@@ -200,7 +200,7 @@ public class Server extends Thread {
                     out.writeUTF("-");
                     out.writeUTF(filename);
                     out.writeUTF(receiverIP);
-                    out.writeUTF(portNum+"");
+                    //out.writeUTF(portNum+"");
                 } catch (Exception e) {
                     System.err.println("could not whisper : " + e);
                 }

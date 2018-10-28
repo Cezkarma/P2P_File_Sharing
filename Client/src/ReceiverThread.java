@@ -13,7 +13,7 @@ public class ReceiverThread extends Thread{
     private int NUM_OF_BLOCKS = 50;
     
     String filename;
-    private int portNum = Client.portNum;
+    private int portNum = 7998;//= Client.portNum;
     private int filesize;
     private int blocksize;
     ServerSocket serverSocket = null;

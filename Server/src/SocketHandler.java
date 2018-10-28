@@ -62,7 +62,7 @@ public class SocketHandler implements Runnable {
                     inFromClient.close();
                 } else if (toUser.equals(SEARCH_MSG)) {
                     //send port nr to receiver
-                    Server.sendPortNumber(username);
+                    //Server.sendPortNumber(username);
                     
                     Server.bcFileRequest(username, message);
                     
