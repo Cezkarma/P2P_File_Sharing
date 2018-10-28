@@ -71,7 +71,7 @@
                                       </Group>
                                       <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                                          <Component id="downloadBtn" min="-2" max="-2" attributes="0"/>
                                           <Component id="filechooseDropDown" min="-2" pref="89" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -144,7 +144,7 @@
                       <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="downloadBtn" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" attributes="0">
@@ -306,10 +306,13 @@
         <Property name="text" type="java.lang.String" value="Pause"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton1">
+    <Component class="javax.swing.JButton" name="downloadBtn">
       <Properties>
         <Property name="text" type="java.lang.String" value="DOWNLOAD"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="downloadBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="java.awt.Choice" name="filechooseDropDown">
       <AuxValues>

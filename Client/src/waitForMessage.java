@@ -56,6 +56,7 @@ public class waitForMessage extends Thread {
                 case '$'://
                     String fileNames = Client.receiveMsg();
                     String[] fileNameList = fileNames.split(",");
+                    chat.filechooseDropDown.removeAll();
                     for (String s : fileNameList) {
                         chat.filechooseDropDown.add(s);
                     }

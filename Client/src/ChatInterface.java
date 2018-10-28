@@ -72,7 +72,7 @@ public class ChatInterface extends javax.swing.JFrame {
         jProgressBar2 = new javax.swing.JProgressBar();
         jLabel5 = new javax.swing.JLabel();
         downloadPauseBtn = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        downloadBtn = new javax.swing.JButton();
         filechooseDropDown = new java.awt.Choice();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -161,7 +161,12 @@ public class ChatInterface extends javax.swing.JFrame {
 
         downloadPauseBtn.setText("Pause");
 
-        jButton1.setText("DOWNLOAD");
+        downloadBtn.setText("DOWNLOAD");
+        downloadBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downloadBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -204,7 +209,7 @@ public class ChatInterface extends javax.swing.JFrame {
                                                 .addGap(76, 76, 76)))
                                         .addGap(50, 50, 50)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jButton1)
+                                            .addComponent(downloadBtn)
                                             .addComponent(filechooseDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                     .addComponent(jLabel3))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
@@ -259,7 +264,7 @@ public class ChatInterface extends javax.swing.JFrame {
                         .addGap(4, 4, 4)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(jButton1))
+                            .addComponent(downloadBtn))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -384,6 +389,17 @@ public class ChatInterface extends javax.swing.JFrame {
             Logger.getLogger(ChatInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_searchButtonActionPerformed
+
+    private void downloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadBtnActionPerformed
+        try {
+            // TODO add your handling code here:
+            String fileSelected = filechooseDropDown.getSelectedItem();
+            Client.sendMessage(fileSelected, "*");
+        } catch (IOException ex) {
+            Logger.getLogger(ChatInterface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_downloadBtnActionPerformed
 
     //Prints the received message in the chat_txt
     public void printMsg(String msg, String FromWho) {
@@ -514,9 +530,9 @@ public class ChatInterface extends javax.swing.JFrame {
     private java.awt.Choice chat_choice_dropdown;
     private javax.swing.JButton connect_btn;
     private javax.swing.JButton disconnect_btn;
+    private javax.swing.JButton downloadBtn;
     private javax.swing.JButton downloadPauseBtn;
     public static java.awt.Choice filechooseDropDown;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

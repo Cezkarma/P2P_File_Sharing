@@ -68,8 +68,12 @@ public class SocketHandler implements Runnable {
                     Server.sendFileList(username, fileNamesToSend);
                 } else if (toUser.equals(FOUND_FILES)) {
                 } else if (toUser.equals(FILE_CHOSEN)) {
-                    Server.fileNames.clear();
-                    //Form dirct connection
+                    String fileSelected = in.readUTF();
+                    String userChosen = Server.fileNames.get(username).get(fileSelected);
+                    
+                    Server.fileNames.get(username).clear();
+                    
+                    
                 } else {
                     Server.whisper(username, toUser, message);
                 }
