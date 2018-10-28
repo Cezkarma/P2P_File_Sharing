@@ -46,6 +46,11 @@ public class waitForMessage extends Thread {
                     String list_of = Client.receiveMsg().substring(1);
                     chat.removeUsers(disconnectedUsr, list_of);
                     break;
+                case '~'://
+                    String search = Client.receiveMsg();
+                    //look for file 
+                    //send filename
+                    break;
                 default:
                     String who = anything;
                     String message = Client.receiveMsg();
