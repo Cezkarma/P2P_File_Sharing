@@ -51,6 +51,10 @@ public class waitForMessage extends Thread {
                     //look for file 
                     //send filename
                     break;
+                case '$'://
+                    String fileNames = Client.receiveMsg();
+                    //convert and display
+                    break;
                 default:
                     String who = anything;
                     String message = Client.receiveMsg();

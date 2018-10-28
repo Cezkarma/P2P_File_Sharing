@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,6 +13,8 @@ public class SocketHandler implements Runnable {
     private String DISCONNECT_MSG = "@";
     private String BROADCAST_MSG = "All";
     private String SEARCH_MSG = "~";
+    private String FOUND_FILES = "$";
+    private String FILE_CHOSEN = "*";
     private String WHO_DISCONNECTED_SGNL = "#";
 
     private String username;
@@ -22,6 +25,8 @@ public class SocketHandler implements Runnable {
     public SocketHandler(String username, Socket clientSocket) {
         this.username = username;
         this.clientSocket = clientSocket;
+
+        Server.fileNames.put(username, new ConcurrentHashMap<String, String>());
     }
 
     @Override
@@ -54,8 +59,17 @@ public class SocketHandler implements Runnable {
                     in.close();
                     inFromClient.close();
                 } else if (toUser.equals(SEARCH_MSG)) {
-
+                    //create new thread that has inf while loop that receives
                     //Broadcast method
+
+                    Thread.sleep(3000);
+                    //Send list to requester 
+
+                } else if (toUser.equals(FOUND_FILES)) {
+                    //Server.fileNames.get( ).put(message, username);
+                } else if (toUser.equals(FILE_CHOSEN)) {
+                    Server.fileNames.clear();
+                    //Form dirct connection
                 } else {
                     Server.whisper(username, toUser, message);
                 }
@@ -69,6 +83,8 @@ public class SocketHandler implements Runnable {
                 }
 
                 break;
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SocketHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
