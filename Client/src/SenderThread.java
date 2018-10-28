@@ -38,21 +38,26 @@ public class SenderThread extends Thread {
     @Override
     public void run() {
         try {
-            socket = new Socket(receiverIP , 7998 );
+            
+            socket = new Socket(receiverIP , port );
             outToReceiver = socket.getOutputStream();
             out = new DataOutputStream(outToReceiver);
             String cwd = System.getProperty("user.dir");
-            RandomAccessFile raf = new RandomAccessFile(cwd+"/"+filename, "r");
+            File file = new File(cwd+"/"+filename);
+            RandomAccessFile raf = new RandomAccessFile(file, "r");
             byte[] b = new byte[(int)raf.length()];
-            raf.readFully(b);
+            //raf.readFully(b);
             blockSize = b.length/numOfBlocks;
             
             out.writeInt(b.length);
+            System.out.println("b.length " + b.length );
+            System.out.println("blocksize " + blockSize );
+
             out.writeInt(blockSize);
             
             
             int tempCount = b.length;
-        
+            
             try {
                 for (int i = 0; i < numOfBlocks - 1; i++) {
                     byte[] byteArray = new byte[blockSize];
@@ -60,6 +65,10 @@ public class SenderThread extends Thread {
                     out.write(byteArray, 0, byteArray.length);
                     out.flush();
                     tempCount -= blockSize;
+//                    for(int j = 0 ; j < byteArray.length; j++){
+//                        System.out.print(byteArray[j] );
+//                    }
+//                    System.out.println("");
                 }
 
                 System.out.println("temp count : " + tempCount);
@@ -68,8 +77,7 @@ public class SenderThread extends Thread {
                 raf.read(byteArray);
                 out.write(byteArray, 0, byteArray.length);
                 out.flush();
-
-
+                
 
             } catch (IOException ex) {
                 Logger.getLogger(cwd).log(Level.SEVERE, null, ex);
