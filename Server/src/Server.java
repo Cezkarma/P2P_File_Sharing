@@ -143,6 +143,7 @@ public class Server extends Thread {
                     out = new DataOutputStream(outFromServer);
                     out.writeUTF("~");
                     out.writeUTF(searchString);
+                    out.writeUTF(username);
                 }
             } catch (Exception e) {
                 System.err.println("problem in broadcast " + e);

@@ -61,8 +61,9 @@ public class SocketHandler implements Runnable {
                     in.close();
                     inFromClient.close();
                 } else if (toUser.equals(SEARCH_MSG)) {
-                    ReceiveFileNameThread t = new ReceiveFileNameThread(username, message, in);
-                    t.start();
+                    Server.bcFileRequest(username, message);
+//                    ReceiveFileNameThread t = new ReceiveFileNameThread(username, message, in);
+//                    t.start();
 //                    for (String usr : Server.listOfUsers.ge) {
 //                        
 //                    }
@@ -75,10 +76,20 @@ public class SocketHandler implements Runnable {
 //                    System.out.println("fileNameRecv : "+fileNameRecv);
                     
                     //System.out.println("*** : "+Server.fileNames.get(username));
+                    while (Server.fileNames.get(username).size() < Server.listOfUsers.size() - 1){}
                     
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
                     Server.sendFileList(username, fileNamesToSend);
                 } else if (toUser.equals(FOUND_FILES)) {
+                    String userFrom = in.readUTF();
+                    String userTo = in.readUTF();
+                    String fileNameRecv = in.readUTF();
+                    
+//                    if (!fileNameRecv.equals("+")) {
+//                        Server.fileNames.get(userTo).put(userFrom, fileNameRecv);
+//                    }
+                    
+                    
                 } else if (toUser.equals(FILE_CHOSEN)) {
                     String fileSelected = in.readUTF();
                     String userChosen = Server.fileNames.get(username).get(fileSelected);
