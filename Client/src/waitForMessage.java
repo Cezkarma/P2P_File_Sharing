@@ -69,6 +69,8 @@ public class waitForMessage extends Thread {
                     String receiverIP = Client.receiveMsg();
                     receiverIP = receiverIP.substring(1, receiverIP.indexOf(':'));
                     System.out.println("Filename : " + filename + "   and   receiverIP :  "+ receiverIP);
+                    SenderThread senderThread = new SenderThread();
+                    senderThread.start();
                     break;    
                 case '$'://
                                         System.out.println("$$$$$$$$$$$$$$$$$$");

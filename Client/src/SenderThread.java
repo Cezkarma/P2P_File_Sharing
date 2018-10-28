@@ -8,6 +8,8 @@
  *
  * @author 18214304
  */
-public class SenderThread {
+public class SenderThread extends Thread {
+    
+    
     
 }
