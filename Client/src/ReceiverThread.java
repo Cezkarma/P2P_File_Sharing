@@ -27,7 +27,6 @@ public class ReceiverThread extends Thread{
     
     public void run(){
         try {
-            System.out.println("PORT NUUUMBER ::: "+portNum);
             
             String cwd = System.getProperty("user.dir");
             File file = new File(cwd+"/"+filename);
@@ -49,7 +48,9 @@ public class ReceiverThread extends Thread{
             int tempCount = filesize;
             
             for (int i = 0; i < NUM_OF_BLOCKS - 1; i++) {
-                while(Client.isPaused){}
+                //System.out.println("i ::: "+Client.isPaused);
+                
+                while(Client.isPaused){System.out.print("");}//System.out.println("j ::: "+Client.isPaused);}
                 byte[] byteArray = new byte[blocksize];
                 in.readFully(byteArray, 0, byteArray.length);
                 bos.write(byteArray, 0, byteArray.length);
@@ -62,15 +63,15 @@ public class ReceiverThread extends Thread{
 //                    System.out.println("");
             }
             
-            System.out.println("TEMP COUNT :: "+tempCount);
             
             byte[] byteArray = new byte[tempCount];
             in.readFully(byteArray, 0, byteArray.length);
             bos.write(byteArray, 0, byteArray.length);
             bos.flush();
             
-            System.out.println("DONE WITH FILE :: ");
+            Client.chat.progressTheDownloadBar(100);
             
+            System.out.println("DONE WITH FILE :: ");
             
         } catch (Exception ex) {
             Logger.getLogger(ReceiverThread.class.getName()).log(Level.SEVERE, null, ex);
