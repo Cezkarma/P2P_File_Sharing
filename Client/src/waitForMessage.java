@@ -1,4 +1,5 @@
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,10 +51,14 @@ public class waitForMessage extends Thread {
                 case '~'://
                     String search = Client.receiveMsg();
                     String fileNameFound = lookForFile(search);
-                    //send filename
+                    Client.sendMessage(fileNameFound, chat.username);
                     break;
                 case '$'://
                     String fileNames = Client.receiveMsg();
+                    String[] fileNameList = fileNames.split(",");
+                    for (String s : fileNameList) {
+                        chat.filechooseDropDown.add(s);
+                    }
                     //convert and display
                     break;
                 default:
@@ -67,7 +72,22 @@ public class waitForMessage extends Thread {
 
     private static String lookForFile(String search) {
         String filename = "";
-
+        String cwd = System.getProperty("user.dir");
+        File path = new File(cwd);
+        double highScore = 0.5;
+        File[] files = path.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isFile()) {
+                double score = similarity(files[i].getName(), search);
+                if (score > highScore) {
+                    filename = files[i].getName();
+                    highScore = score;
+                }
+            }
+        }
+        if (filename.equals("")) {
+            filename = "+";
+        }
         return filename;
     }
 

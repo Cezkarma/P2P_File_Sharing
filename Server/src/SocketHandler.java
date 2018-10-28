@@ -67,7 +67,6 @@ public class SocketHandler implements Runnable {
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
                     Server.sendFileList(username, fileNamesToSend);
                 } else if (toUser.equals(FOUND_FILES)) {
-                    //Server.fileNames.get( ).put(message, username);
                 } else if (toUser.equals(FILE_CHOSEN)) {
                     Server.fileNames.clear();
                     //Form dirct connection

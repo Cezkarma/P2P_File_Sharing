@@ -32,7 +32,9 @@ public class ReceiveFileNameThread extends Thread {
             try {
                 String userFrom = in.readUTF();
                 String fileNameRecv = in.readUTF();
-                Server.fileNames.get(username).put(userFrom, fileNameRecv);
+                if (!fileNameRecv.equals("+")) {
+                    Server.fileNames.get(username).put(userFrom, fileNameRecv);
+                }
             } catch (IOException ex) {
                 Logger.getLogger(ReceiveFileNameThread.class.getName()).log(Level.SEVERE, null, ex);
             }
