@@ -4,12 +4,14 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SocketHandler implements Runnable {
 
+    public static boolean ContinueReceivingFilename = true;
     private String DISCONNECT_MSG = "@";
     private String BROADCAST_MSG = "All";
     private String SEARCH_MSG = "~";
@@ -59,12 +61,14 @@ public class SocketHandler implements Runnable {
                     in.close();
                     inFromClient.close();
                 } else if (toUser.equals(SEARCH_MSG)) {
+
                     //create new thread that has inf while loop that receives
-                    //Broadcast method
-
+                    ReceiveFileNameThread t = new ReceiveFileNameThread(username, message, in);
+                    t.start();
                     Thread.sleep(3000);
-                    //Send list to requester 
+                    String fileNamesToSend = hashToString(Server.fileNames.get(username));
 
+                    //Send list to requester 
                 } else if (toUser.equals(FOUND_FILES)) {
                     //Server.fileNames.get( ).put(message, username);
                 } else if (toUser.equals(FILE_CHOSEN)) {
@@ -92,6 +96,14 @@ public class SocketHandler implements Runnable {
 
     public Socket getClientSocket() {
         return clientSocket;
+    }
+
+    public static String hashToString(ConcurrentHashMap<String, String> map) {
+        String toSend = "";
+        for (Map.Entry<String, String> pair : map.entrySet()) {
+            toSend += pair.getKey() + ",";
+        }
+        return toSend.substring(0, toSend.length() - 1);
     }
 
 }
