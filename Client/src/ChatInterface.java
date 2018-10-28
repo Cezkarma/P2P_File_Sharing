@@ -395,6 +395,9 @@ public class ChatInterface extends javax.swing.JFrame {
             // TODO add your handling code here:
             String fileSelected = filechooseDropDown.getSelectedItem();
             Client.sendMessage(fileSelected, "*");
+            ReceiverThread receiverThread = new ReceiverThread(fileSelected);
+            receiverThread.start();
+            Client.fileName = fileSelected;
         } catch (IOException ex) {
             Logger.getLogger(ChatInterface.class.getName()).log(Level.SEVERE, null, ex);
         }

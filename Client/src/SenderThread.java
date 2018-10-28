@@ -12,10 +12,12 @@ import java.io.DataInputStream;
  * @author 18214304
  */
 public class SenderThread extends Thread {
+    public String filename;
+    public String receiverIP;
     
-    public SenderThread() {
-        
-        
+    public SenderThread(String filename , String receiverIP) {
+        this.filename = filename;
+        this.receiverIP = receiverIP;   
     }
 
     @Override
