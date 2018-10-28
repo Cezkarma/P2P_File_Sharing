@@ -146,6 +146,7 @@ public class ChatInterface extends javax.swing.JFrame {
 
         searchText.setColumns(20);
         searchText.setRows(5);
+        searchText.setText("tree1.jpeg");
         jScrollPane1.setViewportView(searchText);
 
         searchButton.setText("SEARCH");
@@ -203,11 +204,9 @@ public class ChatInterface extends javax.swing.JFrame {
                                                 .addComponent(send_btn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(searchButton)
-                                                .addGap(76, 76, 76)))
-                                        .addGap(50, 50, 50)
+                                            .addComponent(searchButton)
+                                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(38, 38, 38)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(downloadBtn)
                                             .addComponent(filechooseDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))

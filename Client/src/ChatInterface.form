@@ -63,13 +63,10 @@
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jScrollPane1" alignment="1" min="-2" pref="160" max="-2" attributes="0"/>
-                                          <Group type="102" attributes="0">
-                                              <Component id="searchButton" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace min="-2" pref="76" max="-2" attributes="0"/>
-                                          </Group>
+                                          <Component id="searchButton" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jScrollPane1" alignment="0" min="-2" pref="172" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="downloadBtn" min="-2" max="-2" attributes="0"/>
                                           <Component id="filechooseDropDown" min="-2" pref="89" max="-2" attributes="0"/>
@@ -275,6 +272,7 @@
           <Properties>
             <Property name="columns" type="int" value="20"/>
             <Property name="rows" type="int" value="5"/>
+            <Property name="text" type="java.lang.String" value="tree1.jpeg"/>
           </Properties>
         </Component>
       </SubComponents>
