@@ -26,7 +26,7 @@ public class Server extends Thread {
     private static InputStream terminalIn = null;
     private static BufferedReader br = null;
     public static ConcurrentHashMap<String, SocketHandler> listOfUsers = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<String, ConcurrentHashMap<String, String>> fileNames;
+    public static ConcurrentHashMap<String, ConcurrentHashMap<String, String>> fileNames = new ConcurrentHashMap<>();
     
     public static void main(String[] args) {
         int portNumber = 8000;

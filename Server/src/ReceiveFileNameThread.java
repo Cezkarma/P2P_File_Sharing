@@ -23,17 +23,35 @@ public class ReceiveFileNameThread extends Thread {
         this.username = username;
         this.fileName = fileName;
         this.in = in;
+        
     }
 
     @Override
     public void run() {
         Server.bcFileRequest(username, fileName);
-        for (int i = 0; i < Server.listOfUsers.size() - 1; i++) {
+        
+//        for (int i = 0; i < Server.listOfUsers.size() - 1; i++) {
+        for (String usr : Server.listOfUsers.keySet()) {
             try {
-                String userFrom = in.readUTF();
-                String fileNameRecv = in.readUTF();
-                if (!fileNameRecv.equals("+")) {
-                    Server.fileNames.get(username).put(userFrom, fileNameRecv);
+                if (!usr.equals(username)){
+                    System.out.println("IM IN THE RUN");
+                
+                    DataInputStream in2 = Server.listOfUsers.get(usr).in;
+                    
+                    System.out.println("IN2 :: "+ (in2==Server.listOfUsers.get(usr).in));
+                    System.out.println("IN1 :: "+in);
+                
+                    String userFrom = in2.readUTF();
+                    String fileNameRecv = in2.readUTF();
+                
+                    System.out.println("KAKAKAKAKAK");
+                    
+                    System.out.println("userFrom : "+userFrom);
+                    System.out.println("fileNameRecv : "+fileNameRecv);
+                
+                    if (!fileNameRecv.equals("+")) {
+                        Server.fileNames.get(username).put(userFrom, fileNameRecv);
+                    }
                 }
             } catch (IOException ex) {
                 Logger.getLogger(ReceiveFileNameThread.class.getName()).log(Level.SEVERE, null, ex);
