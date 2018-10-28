@@ -37,7 +37,7 @@ public class waitForMessage extends Thread {
     public static void waitForMsg(ChatInterface chat) throws IOException, InterruptedException {
         String list_of_users = Client.receiveMsg();
         chat.addAllusers(list_of_users.substring(1, list_of_users.length()));
-
+        
         while (true) {
             String anything = Client.receiveMsg();
             switch (anything.charAt(0)) {
@@ -67,7 +67,7 @@ public class waitForMessage extends Thread {
 
                     String filename = Client.receiveMsg();
                     String receiverIP = Client.receiveMsg();
-                    Client.portNum = Integer.parseInt(Client.receiveMsg());
+                    //Client.portNum = Integer.parseInt(Client.receiveMsg());
                     receiverIP = receiverIP.substring(1, receiverIP.indexOf(':'));
                     System.out.println("Filename : " + filename + "   and   receiverIP :  "+ receiverIP);
                     SenderThread senderThread = new SenderThread(filename , receiverIP);

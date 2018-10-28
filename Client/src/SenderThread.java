@@ -38,7 +38,7 @@ public class SenderThread extends Thread {
     @Override
     public void run() {
         try {
-            socket = new Socket(receiverIP , port );
+            socket = new Socket(receiverIP , 7998 );
             outToReceiver = socket.getOutputStream();
             out = new DataOutputStream(outToReceiver);
             String cwd = System.getProperty("user.dir");

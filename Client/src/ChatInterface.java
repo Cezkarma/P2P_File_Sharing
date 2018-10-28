@@ -384,7 +384,7 @@ public class ChatInterface extends javax.swing.JFrame {
         String search = searchText.getText();
         try {
             Client.sendMessage(search, "~");
-            Client.portNum = Integer.parseInt(Client.receiveMsg());
+            //Client.portNum = Integer.parseInt(Client.receiveMsg());
         } catch (IOException ex) {
             Logger.getLogger(ChatInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
