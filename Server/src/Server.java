@@ -194,13 +194,12 @@ public class Server extends Thread {
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             if (pair.getKey().equals(sender)) {
                 try {
-                    System.out.println("kakapoopoo");
                     outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
                     out = new DataOutputStream(outFromServer);
                     out.writeUTF("-");
                     out.writeUTF(filename);
                     out.writeUTF(receiverIP);
-                    //out.writeUTF(portNum+"");
+                    out.writeUTF(portNum+"");
                 } catch (Exception e) {
                     System.err.println("could not whisper : " + e);
                 }

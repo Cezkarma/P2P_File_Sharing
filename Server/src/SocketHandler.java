@@ -62,7 +62,6 @@ public class SocketHandler implements Runnable {
                     inFromClient.close();
                 } else if (toUser.equals(SEARCH_MSG)) {
                     //send port nr to receiver
-                    //Server.sendPortNumber(username);
                     
                     Server.bcFileRequest(username, message);
                     
@@ -74,29 +73,21 @@ public class SocketHandler implements Runnable {
                     
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
                     Server.sendFileList(username, fileNamesToSend);
+                    Server.sendPortNumber(username);
                 } else if (toUser.equals(FOUND_FILES)) {
                     String userFrom = message;
                     String userTo = in.readUTF();
                     String fileNameRecv = in.readUTF();
                     
-//                    if (!fileNameRecv.equals("+")) {
-                        Server.fileNames.get(userTo).put(fileNameRecv, userFrom);
-//                    }
-                    System.out.println("##username ::: "+userTo);
-                    System.out.println("##fileselected ::: "+fileNameRecv);
-                    System.out.println("##userchosen ::: "+userFrom);
+                    Server.fileNames.get(userTo).put(fileNameRecv, userFrom);
                     
                     
                 } else if (toUser.equals(FILE_CHOSEN)) {
                     String fileSelected = message;
                     String userChosen = Server.fileNames.get(username).get(fileSelected);
                     //clientSocket.getRemoteSocketAddress().toString()
-                    System.out.println("username ::: "+username);
-                    System.out.println("fileselected ::: "+fileSelected);
-                    System.out.println("userchosen ::: "+userChosen);
                     
                     Server.sendToSender(fileSelected, userChosen , clientSocket.getRemoteSocketAddress().toString());
-                    System.out.println("Jaccardi B");
                     Server.fileNames.get(username).clear();
                     
                     

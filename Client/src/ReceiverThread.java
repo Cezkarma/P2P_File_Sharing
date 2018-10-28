@@ -13,7 +13,7 @@ public class ReceiverThread extends Thread{
     private int NUM_OF_BLOCKS = 50;
     
     String filename;
-    private int portNum = 7998;//= Client.portNum;
+    private int portNum = Client.portNum;
     private int filesize;
     private int blocksize;
     ServerSocket serverSocket = null;
@@ -51,12 +51,21 @@ public class ReceiverThread extends Thread{
                 in.readFully(byteArray, 0, byteArray.length);
                 bos.write(byteArray, 0, byteArray.length);
                 tempCount -= blocksize;
+//                    for (int j = 0; j < byteArray.length; j++) {
+//                        System.out.print(byteArray[j]);
+//                    }
+//                    System.out.println("");
             }
+            
+            System.out.println("TEMP COUNT :: "+tempCount);
             
             byte[] byteArray = new byte[tempCount];
             in.readFully(byteArray, 0, byteArray.length);
             bos.write(byteArray, 0, byteArray.length);
             bos.flush();
+            
+            System.out.println("DONE WITH FILE :: ");
+            
             
         } catch (Exception ex) {
             Logger.getLogger(ReceiverThread.class.getName()).log(Level.SEVERE, null, ex);
