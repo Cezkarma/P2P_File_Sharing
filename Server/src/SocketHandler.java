@@ -61,6 +61,8 @@ public class SocketHandler implements Runnable {
                     in.close();
                     inFromClient.close();
                 } else if (toUser.equals(SEARCH_MSG)) {
+                    System.out.println("Ahhhhhhhhhhhhhhhh");
+                    
                     Server.bcFileRequest(username, message);
 //                    ReceiveFileNameThread t = new ReceiveFileNameThread(username, message, in);
 //                    t.start();
@@ -81,12 +83,15 @@ public class SocketHandler implements Runnable {
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
                     Server.sendFileList(username, fileNamesToSend);
                 } else if (toUser.equals(FOUND_FILES)) {
-                    String userFrom = in.readUTF();
+                    String userFrom = message;
+                    System.out.println("userFrom ::: "+userFrom);
                     String userTo = in.readUTF();
+                    System.out.println("userTo ::: "+userTo);
                     String fileNameRecv = in.readUTF();
+                    System.out.println("fileNameRecv ::: "+fileNameRecv);
                     
 //                    if (!fileNameRecv.equals("+")) {
-//                        Server.fileNames.get(userTo).put(userFrom, fileNameRecv);
+                        Server.fileNames.get(userTo).put(userFrom, fileNameRecv);
 //                    }
                     
                     
@@ -124,7 +129,7 @@ public class SocketHandler implements Runnable {
     public static String hashToString(ConcurrentHashMap<String, String> map) {
         String toSend = "";
         for (Map.Entry<String, String> pair : map.entrySet()) {
-            toSend = toSend + pair.getKey() + ",";
+            toSend = toSend + pair.getValue()+ ",";
         }
         
         System.out.println("TO SEND ::: "+toSend);
