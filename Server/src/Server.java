@@ -130,8 +130,25 @@ public class Server extends Thread{
             } catch (Exception e) {
                 System.err.println("problem in broadcast "+e);
             }
-        }
-                
+        }        
+    }
+    
+    public static void bcFileRequest(String username, String searchString) {
+        OutputStream outFromServer = null;
+        DataOutputStream out = null;
+
+        for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
+            try {
+                if (!pair.getKey().equals(username)) {
+                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
+                    out = new DataOutputStream(outFromServer);
+                    out.writeUTF("~");
+                    out.writeUTF(searchString);
+                }
+            } catch (Exception e) {
+                System.err.println("problem in broadcast "+e);
+            }
+        }        
     }
     
     public static void whisper(String usernameFrom, String usernameTo, String message) {
