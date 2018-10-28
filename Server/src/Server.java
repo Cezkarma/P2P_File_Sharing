@@ -187,5 +187,23 @@ public class Server extends Thread {
         }
         
     }
-    public static void sendU
+    public static void sendToSender(String filename , String sender , String receiverIP){
+        OutputStream outFromServer = null;
+        DataOutputStream out = null;
+        
+        for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
+            if (pair.getKey().equals(sender)) {
+                try {
+                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
+                    out = new DataOutputStream(outFromServer);
+                    out.writeUTF("-");
+                    out.writeUTF(filename);
+                    out.writeUTF(receiverIP);
+                } catch (Exception e) {
+                    System.err.println("could not whisper : " + e);
+                }
+            }
+        }
+    
+    }
 }

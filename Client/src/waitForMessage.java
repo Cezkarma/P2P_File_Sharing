@@ -53,6 +53,11 @@ public class waitForMessage extends Thread {
                     String fileNameFound = lookForFile(search);
                     Client.sendMessage(fileNameFound, chat.username);
                     break;
+                 case '-'://
+                    String filename = Client.receiveMsg();
+                    String receiverIP = Client.receiveMsg();
+                    System.out.println("Filename : " + filename + "   and   receiverIP :  "+ receiverIP);
+                    break;    
                 case '$'://
                     String fileNames = Client.receiveMsg();
                     String[] fileNameList = fileNames.split(",");

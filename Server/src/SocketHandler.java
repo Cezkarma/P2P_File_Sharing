@@ -70,7 +70,7 @@ public class SocketHandler implements Runnable {
                 } else if (toUser.equals(FILE_CHOSEN)) {
                     String fileSelected = in.readUTF();
                     String userChosen = Server.fileNames.get(username).get(fileSelected);
-                    
+                    Server.sendToSender(fileSelected, userChosen , clientSocket.getRemoteSocketAddress().toString() );
                     Server.fileNames.get(username).clear();
                     
                     
