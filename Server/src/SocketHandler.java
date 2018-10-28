@@ -68,7 +68,7 @@ public class SocketHandler implements Runnable {
                     
                     
                     
-                    Server.portNum--;
+                    //Server.portNum--;
                     
                     while (Server.fileNames.get(username).size() < Server.listOfUsers.size() - 1){}
                     
