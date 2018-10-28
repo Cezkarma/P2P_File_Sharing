@@ -38,7 +38,7 @@ public class SenderThread extends Thread {
     @Override
     public void run() {
         try {
-            
+            System.out.println("port number :  "  + port);
             socket = new Socket(receiverIP , port );
             outToReceiver = socket.getOutputStream();
             out = new DataOutputStream(outToReceiver);

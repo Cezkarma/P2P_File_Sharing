@@ -13,7 +13,8 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class Client {
-
+    
+    public static boolean isPaused = false;
     private static String DISCONNECT_MSG = "@";
     public static String fileName;
     public static int portNum;

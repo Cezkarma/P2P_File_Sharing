@@ -5,6 +5,7 @@
  */
 //package rw354_tut1_client;
 
+import java.awt.Color;
 import java.io.IOException;
 //import static java.time.Clock.system;
 import java.util.Arrays;
@@ -161,6 +162,11 @@ public class ChatInterface extends javax.swing.JFrame {
         jLabel5.setText("Upload Progress:");
 
         downloadPauseBtn.setText("Pause");
+        downloadPauseBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downloadPauseBtnActionPerformed(evt);
+            }
+        });
 
         downloadBtn.setText("DOWNLOAD");
         downloadBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -403,6 +409,17 @@ public class ChatInterface extends javax.swing.JFrame {
 
     }//GEN-LAST:event_downloadBtnActionPerformed
 
+    private void downloadPauseBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadPauseBtnActionPerformed
+        // TODO add your handling code here:
+        Client.isPaused = !Client.isPaused;
+        if(Client.isPaused){
+            downloadPauseBtn.setBackground(Color.gray);
+        } else {
+            downloadPauseBtn.setBackground(Color.white);
+        }
+        
+    }//GEN-LAST:event_downloadPauseBtnActionPerformed
+
     //Prints the received message in the chat_txt
     public void printMsg(String msg, String FromWho) {
         Chat_txt.append(FromWho + ":" + msg + "\n");
@@ -533,7 +550,7 @@ public class ChatInterface extends javax.swing.JFrame {
     private javax.swing.JButton connect_btn;
     private javax.swing.JButton disconnect_btn;
     private javax.swing.JButton downloadBtn;
-    private javax.swing.JButton downloadPauseBtn;
+    public static javax.swing.JButton downloadPauseBtn;
     public static java.awt.Choice filechooseDropDown;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
