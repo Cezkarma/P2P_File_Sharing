@@ -26,13 +26,15 @@ public class waitForMessage extends Thread {
             ChatInterface.connected = false;
             JOptionPane.showMessageDialog(chat, "You are disconnected from the server.");
 
+        } catch (InterruptedException ex) {
+            Logger.getLogger(waitForMessage.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
     //An infinite while loop the is looking for incoming messages
     //It checks the code of the message and based on that categorizes the follwoing message
-    public static void waitForMsg(ChatInterface chat) throws IOException {
+    public static void waitForMsg(ChatInterface chat) throws IOException, InterruptedException {
         String list_of_users = Client.receiveMsg();
         chat.addAllusers(list_of_users.substring(1, list_of_users.length()));
 
@@ -49,16 +51,22 @@ public class waitForMessage extends Thread {
                     chat.removeUsers(disconnectedUsr, list_of);
                     break;
                 case '~'://
+                    System.out.println("~~~~~~~~~~~~~~~~");
                     String search = Client.receiveMsg();
                     String fileNameFound = lookForFile(search);
+                    System.out.println("Chosen File : " + fileNameFound);
                     Client.sendMessage(fileNameFound, chat.username);
                     break;
                  case '-'://
+                                         System.out.println("---------------");
+
                     String filename = Client.receiveMsg();
                     String receiverIP = Client.receiveMsg();
                     System.out.println("Filename : " + filename + "   and   receiverIP :  "+ receiverIP);
                     break;    
                 case '$'://
+                                        System.out.println("$$$$$$$$$$$$$$$$$$");
+
                     String fileNames = Client.receiveMsg();
                     String[] fileNameList = fileNames.split(",");
                     chat.filechooseDropDown.removeAll();
@@ -83,6 +91,7 @@ public class waitForMessage extends Thread {
         double highScore = 0.5;
         File[] files = path.listFiles();
         for (int i = 0; i < files.length; i++) {
+
             if (files[i].isFile()) {
                 double score = similarity(files[i].getName(), search);
                 if (score > highScore) {

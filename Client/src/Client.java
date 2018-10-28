@@ -18,7 +18,7 @@ public class Client {
 
     public boolean valid_connection = true;
     private static int port = 8000;
-    static String serverName = "146.232.49.154";
+    static String serverName = "146.232.50.162";
     static OutputStream outToServer;
     static DataOutputStream out;
     static InputStream inFromServer;
