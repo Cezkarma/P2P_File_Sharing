@@ -63,7 +63,19 @@ public class SocketHandler implements Runnable {
                 } else if (toUser.equals(SEARCH_MSG)) {
                     ReceiveFileNameThread t = new ReceiveFileNameThread(username, message, in);
                     t.start();
-                    Thread.sleep(3000);
+//                    for (String usr : Server.listOfUsers.ge) {
+//                        
+//                    }
+                    
+                    //Thread.sleep(3000);
+//                    Server.bcFileRequest(username, message);
+//                    String userFrom = in.readUTF();
+//                    String fileNameRecv = in.readUTF();
+//                    System.out.println("userFrom : "+userFrom + "   ");
+//                    System.out.println("fileNameRecv : "+fileNameRecv);
+                    
+                    //System.out.println("*** : "+Server.fileNames.get(username));
+                    
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
                     Server.sendFileList(username, fileNamesToSend);
                 } else if (toUser.equals(FOUND_FILES)) {
@@ -87,7 +99,7 @@ public class SocketHandler implements Runnable {
                 }
 
                 break;
-            } catch (InterruptedException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(SocketHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -101,8 +113,11 @@ public class SocketHandler implements Runnable {
     public static String hashToString(ConcurrentHashMap<String, String> map) {
         String toSend = "";
         for (Map.Entry<String, String> pair : map.entrySet()) {
-            toSend += pair.getKey() + ",";
+            toSend = toSend + pair.getKey() + ",";
         }
+        
+        System.out.println("TO SEND ::: "+toSend);
+        
         return toSend.substring(0, toSend.length() - 1);
     }
 
