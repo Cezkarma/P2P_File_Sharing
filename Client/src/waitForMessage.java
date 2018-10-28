@@ -67,6 +67,7 @@ public class waitForMessage extends Thread {
 
                     String filename = Client.receiveMsg();
                     String receiverIP = Client.receiveMsg();
+                    Client.portNum = Integer.parseInt(Client.receiveMsg());
                     receiverIP = receiverIP.substring(1, receiverIP.indexOf(':'));
                     System.out.println("Filename : " + filename + "   and   receiverIP :  "+ receiverIP);
                     SenderThread senderThread = new SenderThread();
@@ -74,8 +75,9 @@ public class waitForMessage extends Thread {
                     break;    
                 case '$'://
                                         System.out.println("$$$$$$$$$$$$$$$$$$");
-
+                    
                     String fileNames = Client.receiveMsg();
+                    
                     String[] fileNameList = fileNames.split(",");
                     chat.filechooseDropDown.removeAll();
                     for (String s : fileNameList) {

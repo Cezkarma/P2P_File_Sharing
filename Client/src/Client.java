@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 public class Client {
 
     private static String DISCONNECT_MSG = "@";
-
+    public static int portNum;
     public boolean valid_connection = true;
     private static int port = 8000;
     static String serverName = "146.232.50.162";
