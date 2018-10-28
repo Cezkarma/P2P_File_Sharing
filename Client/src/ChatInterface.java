@@ -68,9 +68,9 @@ public class ChatInterface extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         searchText = new javax.swing.JTextArea();
         searchButton = new javax.swing.JButton();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        downloadProgBar = new javax.swing.JProgressBar();
         jLabel4 = new javax.swing.JLabel();
-        jProgressBar2 = new javax.swing.JProgressBar();
+        uploadProgBar = new javax.swing.JProgressBar();
         jLabel5 = new javax.swing.JLabel();
         downloadPauseBtn = new javax.swing.JButton();
         downloadBtn = new javax.swing.JButton();
@@ -221,9 +221,9 @@ public class ChatInterface extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(jProgressBar2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(uploadProgBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel5))
-                                    .addComponent(jProgressBar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(downloadProgBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                         .addComponent(downloadPauseBtn)
                                         .addGap(37, 37, 37)))
@@ -265,7 +265,7 @@ public class ChatInterface extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jProgressBar2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(uploadProgBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(4, 4, 4)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
@@ -273,7 +273,7 @@ public class ChatInterface extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(downloadProgBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(downloadPauseBtn)
                                 .addGap(43, 43, 43)
@@ -542,6 +542,14 @@ public class ChatInterface extends javax.swing.JFrame {
             }
         });
     }
+    
+    public static void progressTheDownloadBar(int prog){
+        downloadProgBar.setValue(prog);
+    }
+    
+    public static void progressTheUploadBar(int prog){
+        uploadProgBar.setValue(prog);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.TextArea Chat_txt;
@@ -551,20 +559,20 @@ public class ChatInterface extends javax.swing.JFrame {
     private javax.swing.JButton disconnect_btn;
     private javax.swing.JButton downloadBtn;
     public static javax.swing.JButton downloadPauseBtn;
+    public static javax.swing.JProgressBar downloadProgBar;
     public static java.awt.Choice filechooseDropDown;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JProgressBar jProgressBar2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField msg_txt;
     private javax.swing.JButton reset_btn;
     private javax.swing.JButton searchButton;
     private javax.swing.JTextArea searchText;
     private javax.swing.JButton send_btn;
+    public static javax.swing.JProgressBar uploadProgBar;
     private javax.swing.JTextField username_txt;
     private java.awt.TextArea users_txt;
     // End of variables declaration//GEN-END:variables

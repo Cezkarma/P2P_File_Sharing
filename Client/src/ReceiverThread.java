@@ -54,6 +54,8 @@ public class ReceiverThread extends Thread{
                 in.readFully(byteArray, 0, byteArray.length);
                 bos.write(byteArray, 0, byteArray.length);
                 tempCount -= blocksize;
+                
+                Client.chat.progressTheDownloadBar((int) 100 * i/50);
 //                    for (int j = 0; j < byteArray.length; j++) {
 //                        System.out.print(byteArray[j]);
 //                    }
