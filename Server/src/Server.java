@@ -19,10 +19,11 @@ import java.util.logging.Logger;
 
 public class Server extends Thread {
     
-    static OutputStream outFromServer;
-    static DataOutputStream out;
-    static InputStream inFromClient;
-    static DataInputStream in;
+    public static int portNum = 7998;
+    public static OutputStream outFromServer;
+    public static DataOutputStream out;
+    public static InputStream inFromClient;
+    public static DataInputStream in;
     private static InputStream terminalIn = null;
     private static BufferedReader br = null;
     public static ConcurrentHashMap<String, SocketHandler> listOfUsers = new ConcurrentHashMap<>();
@@ -167,7 +168,6 @@ public class Server extends Thread {
                 }
             }
         }
-        
     }
     
     public static void sendFileList(String usernameTo, String fileList) {
@@ -186,7 +186,6 @@ public class Server extends Thread {
                 }
             }
         }
-        
     }
     public static void sendToSender(String filename , String sender , String receiverIP){
         OutputStream outFromServer = null;
@@ -195,16 +194,34 @@ public class Server extends Thread {
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             if (pair.getKey().equals(sender)) {
                 try {
+                    System.out.println("kakapoopoo");
                     outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
                     out = new DataOutputStream(outFromServer);
                     out.writeUTF("-");
                     out.writeUTF(filename);
                     out.writeUTF(receiverIP);
+                    out.writeUTF(portNum+"");
                 } catch (Exception e) {
                     System.err.println("could not whisper : " + e);
                 }
             }
         }
+    }
     
+    public static void sendPortNumber(String usernameTo) {
+        OutputStream outFromServer = null;
+        DataOutputStream out = null;
+        
+        for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
+            if (pair.getKey().equals(usernameTo)) {
+                try {
+                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
+                    out = new DataOutputStream(outFromServer);
+                    out.writeUTF(portNum+"");
+                } catch (Exception e) {
+                    System.err.println("could not whisper : " + e);
+                }
+            }
+        }
     }
 }

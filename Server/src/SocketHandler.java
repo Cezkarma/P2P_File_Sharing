@@ -61,44 +61,42 @@ public class SocketHandler implements Runnable {
                     in.close();
                     inFromClient.close();
                 } else if (toUser.equals(SEARCH_MSG)) {
-                    System.out.println("Ahhhhhhhhhhhhhhhh");
+                    //send port nr to receiver
+                    Server.sendPortNumber(username);
                     
                     Server.bcFileRequest(username, message);
-//                    ReceiveFileNameThread t = new ReceiveFileNameThread(username, message, in);
-//                    t.start();
-//                    for (String usr : Server.listOfUsers.ge) {
-//                        
-//                    }
                     
-                    //Thread.sleep(3000);
-//                    Server.bcFileRequest(username, message);
-//                    String userFrom = in.readUTF();
-//                    String fileNameRecv = in.readUTF();
-//                    System.out.println("userFrom : "+userFrom + "   ");
-//                    System.out.println("fileNameRecv : "+fileNameRecv);
                     
-                    //System.out.println("*** : "+Server.fileNames.get(username));
+                    
+                    Server.portNum--;
+                    
                     while (Server.fileNames.get(username).size() < Server.listOfUsers.size() - 1){}
                     
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
                     Server.sendFileList(username, fileNamesToSend);
                 } else if (toUser.equals(FOUND_FILES)) {
                     String userFrom = message;
-                    System.out.println("userFrom ::: "+userFrom);
                     String userTo = in.readUTF();
-                    System.out.println("userTo ::: "+userTo);
                     String fileNameRecv = in.readUTF();
-                    System.out.println("fileNameRecv ::: "+fileNameRecv);
                     
 //                    if (!fileNameRecv.equals("+")) {
-                        Server.fileNames.get(userTo).put(userFrom, fileNameRecv);
+                        Server.fileNames.get(userTo).put(fileNameRecv, userFrom);
 //                    }
+                    System.out.println("##username ::: "+userTo);
+                    System.out.println("##fileselected ::: "+fileNameRecv);
+                    System.out.println("##userchosen ::: "+userFrom);
                     
                     
                 } else if (toUser.equals(FILE_CHOSEN)) {
-                    String fileSelected = in.readUTF();
+                    String fileSelected = message;
                     String userChosen = Server.fileNames.get(username).get(fileSelected);
-                    Server.sendToSender(fileSelected, userChosen , clientSocket.getRemoteSocketAddress().toString() );
+                    //clientSocket.getRemoteSocketAddress().toString()
+                    System.out.println("username ::: "+username);
+                    System.out.println("fileselected ::: "+fileSelected);
+                    System.out.println("userchosen ::: "+userChosen);
+                    
+                    Server.sendToSender(fileSelected, userChosen , clientSocket.getRemoteSocketAddress().toString());
+                    System.out.println("Jaccardi B");
                     Server.fileNames.get(username).clear();
                     
                     
@@ -129,7 +127,7 @@ public class SocketHandler implements Runnable {
     public static String hashToString(ConcurrentHashMap<String, String> map) {
         String toSend = "";
         for (Map.Entry<String, String> pair : map.entrySet()) {
-            toSend = toSend + pair.getValue()+ ",";
+            toSend = toSend + pair.getKey()+ ",";
         }
         
         System.out.println("TO SEND ::: "+toSend);
