@@ -53,9 +53,14 @@ public class waitForMessage extends Thread {
                 case '~'://
                     System.out.println("~~~~~~~~~~~~~~~~");
                     String search = Client.receiveMsg();
+                    String userFrom = Client.receiveMsg();
                     String fileNameFound = lookForFile(search);
                     System.out.println("Chosen File : " + fileNameFound);
-                    Client.sendMessage(fileNameFound, chat.username);
+                    Client.out.writeUTF("$");
+                    Client.out.writeUTF(chat.username);
+                    Client.out.writeUTF(userFrom);
+                    Client.out.writeUTF(fileNameFound);
+                    
                     break;
                  case '-'://
                                          System.out.println("---------------");
@@ -71,7 +76,9 @@ public class waitForMessage extends Thread {
                     String[] fileNameList = fileNames.split(",");
                     chat.filechooseDropDown.removeAll();
                     for (String s : fileNameList) {
-                        chat.filechooseDropDown.add(s);
+                        if(!s.equals("+")){
+                            chat.filechooseDropDown.add(s);
+                        }
                     }
                     //convert and display
                     break;
