@@ -27,6 +27,8 @@ public class ReceiverThread extends Thread{
     
     public void run(){
         try {
+            System.out.println("PORT NUUUMBER ::: "+portNum);
+            
             String cwd = System.getProperty("user.dir");
             File file = new File(cwd+"/"+filename);
             FileOutputStream fos = new FileOutputStream(file);
@@ -47,6 +49,7 @@ public class ReceiverThread extends Thread{
             int tempCount = filesize;
             
             for (int i = 0; i < NUM_OF_BLOCKS - 1; i++) {
+                while(Client.isPaused){}
                 byte[] byteArray = new byte[blocksize];
                 in.readFully(byteArray, 0, byteArray.length);
                 bos.write(byteArray, 0, byteArray.length);

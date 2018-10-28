@@ -74,6 +74,8 @@ public class SocketHandler implements Runnable {
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
                     Server.sendFileList(username, fileNamesToSend);
                     Server.sendPortNumber(username);
+                    
+                    //Server.portNum--;
                 } else if (toUser.equals(FOUND_FILES)) {
                     String userFrom = message;
                     String userTo = in.readUTF();
