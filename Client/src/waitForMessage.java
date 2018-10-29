@@ -88,7 +88,8 @@ public class waitForMessage extends Thread {
                     for (String s : fileNameList) {
                         if(!s.equals("+")){
                             isPlusses = false;
-                            chat.filechooseDropDown.add(s);
+                            //chat.filechooseDropDown.add(s);
+                            chat.filechooseDropDown.addItem(s);
                         }
                     }
                     if(isPlusses){
