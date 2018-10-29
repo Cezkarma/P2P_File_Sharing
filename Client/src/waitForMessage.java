@@ -81,6 +81,7 @@ public class waitForMessage extends Thread {
                     Client.portNum = Integer.parseInt(Client.receiveMsg());
 
                     String[] fileNameList = fileNames.split(",");
+                    System.out.println("List Of filenames : " + fileNameList.toString());
                     chat.filechooseDropDown.removeAll();
                     boolean isPlusses = true;
                     for (String s : fileNameList) {
@@ -109,7 +110,7 @@ public class waitForMessage extends Thread {
         String filename = "";
         String cwd = System.getProperty("user.dir");
         File path = new File(cwd);
-        double highScore = 0.5;
+        double highScore = 0.3;
         File[] files = path.listFiles();
         for (int i = 0; i < files.length; i++) {
 
