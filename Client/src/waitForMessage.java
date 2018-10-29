@@ -81,10 +81,17 @@ public class waitForMessage extends Thread {
 
                     String[] fileNameList = fileNames.split(",");
                     chat.filechooseDropDown.removeAll();
+                    boolean isPlusses = true;
                     for (String s : fileNameList) {
                         if(!s.equals("+")){
+                            isPlusses = false;
                             chat.filechooseDropDown.add(s);
                         }
+                    }
+                    if(isPlusses){
+                        JOptionPane.showMessageDialog(chat, "No file found");
+                        
+                    
                     }
                     //convert and display
                     break;
