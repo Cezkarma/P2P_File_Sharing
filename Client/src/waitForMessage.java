@@ -64,8 +64,8 @@ public class waitForMessage extends Thread {
                         System.out.println("Search : " + search );
                         System.out.println("Chosen File : " + fileNameFound);
                         Client.out.writeUTF("$");
-//                        Client.out.writeUTF(chat.username);
-                        byte[] e = Client.encrypt(Server.myPublicKey, chat.username.getBytes());
+                        //Client.out.writeUTF(chat.username);
+                        byte[] e = Client.encrypt(Client.serverKey, chat.username.getBytes());
                         Client.out.writeUTF(new String(e));
                         Client.out.writeUTF(userFrom);
                         Client.out.writeUTF(fileNameFound);

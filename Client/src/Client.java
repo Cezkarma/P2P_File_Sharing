@@ -3,6 +3,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.security.InvalidKeyException;
@@ -13,6 +15,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -37,6 +41,9 @@ public class Client {
     static Socket client;
     public static ChatInterface chat;
     public static String IP_ad;
+    public static ObjectOutputStream objectOut;
+    public static ObjectInputStream objectIn;
+    public static PublicKey serverKey;
 
     /**
      * @param args the command line arguments
@@ -66,13 +73,18 @@ public class Client {
                 JOptionPane.showMessageDialog(chat, "invalid IP");
                 return;
             }
+            serverKey = receiveObj();
+            System.out.println("ServerKey  : " + serverKey.toString() );
             String userList_intial = receiveMsg();
             boolean validUsrn = checkUsername(userList_intial, chat.username);
             if (!validUsrn) {
                 JOptionPane.showMessageDialog(chat, "Username taken , new username : " + chat.username);
             }
             outToServer = client.getOutputStream();
+            objectOut = new ObjectOutputStream(outToServer);
             out = new DataOutputStream(outToServer);
+            objectOut.writeObject(myPublicKey);
+            System.out.println("myPublicKey  : " + myPublicKey.toString());
             out.writeUTF(chat.username);
             waitForMessage waitFor = new waitForMessage(chat);
 
@@ -114,6 +126,17 @@ public class Client {
             System.err.println("Disconnection Error : " + ex);
         }
 
+    }
+    public static PublicKey receiveObj() throws IOException {
+        PublicKey inputFromServer = null;
+        try {
+            inFromServer = client.getInputStream();
+            objectIn = new ObjectInputStream(inFromServer);
+            inputFromServer = (PublicKey) objectIn.readObject();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            return inputFromServer;
     }
 
     public static String receiveMsg() throws IOException {
