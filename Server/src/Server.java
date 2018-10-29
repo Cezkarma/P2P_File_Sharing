@@ -143,7 +143,7 @@ public class Server extends Thread {
                 out.flush();
 
             } catch (Exception e) {
-                System.err.println("problem in sendUserList " + e);
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
             }
         }
 
@@ -164,7 +164,7 @@ public class Server extends Thread {
                 out.writeObject(encrypt(clientKey, message.getBytes()));
                 out.flush();
             } catch (Exception e) {
-                System.err.println("problem in broadcast " + e);
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
             }
         }
     }
@@ -188,7 +188,7 @@ public class Server extends Thread {
                     out.flush();
                 }
             } catch (Exception e) {
-                System.err.println("problem in broadcast " + e);
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
             }
         }
     }
@@ -210,7 +210,7 @@ public class Server extends Thread {
                     out.writeObject(encrypt(clientKey, message.getBytes()));
                     out.flush();
                 } catch (Exception e) {
-                    System.err.println("could not whisper : " + e);
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
                 }
             }
         }
@@ -236,7 +236,7 @@ public class Server extends Thread {
 
                     System.out.println("2");
                 } catch (Exception e) {
-                    System.err.println("could not whisper : " + e);
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
                 }
             }
         }
@@ -253,7 +253,7 @@ public class Server extends Thread {
 //                    out = new ObjectOutputStream(outFromServer);
                     out = pair.getValue().getOut();
                     PublicKey clientKey = pair.getValue().getClientKey();
-                    out.writeObject(encrypt(clientKey, filename.getBytes("-")));
+                    out.writeObject(encrypt(clientKey, "-".getBytes()));
                     out.flush();
                     out.writeObject(encrypt(clientKey, filename.getBytes()));
                     out.flush();
@@ -264,7 +264,7 @@ public class Server extends Thread {
                     portNumSender--;
                     System.out.println("REACHED :: " + portNumSender);
                 } catch (Exception e) {
-                    System.err.println("could not whisper : " + e);
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
                 }
             }
         }
@@ -285,7 +285,7 @@ public class Server extends Thread {
                     out.flush();
                     portNumReceiver--;
                 } catch (Exception e) {
-                    System.err.println("could not whisper : " + e);
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
                 }
             }
         }

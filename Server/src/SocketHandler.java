@@ -93,12 +93,14 @@ public class SocketHandler implements Runnable {
 
                 } else if (toUser.equals(FILE_CHOSEN)) {
                     String fileSelected = message;
+                    int tempPort1 = Integer.parseInt(new String(Server.decrypt((byte[]) in.readObject())));
                     int tempPort = Integer.parseInt(new String(Server.decrypt((byte[]) in.readObject())));
 
                     String userChosen = Server.fileNames.get(username).get(fileSelected);
 
                     System.out.println("file selected : " + fileSelected);
                     System.out.println("user selected : " + userChosen);
+                    System.out.println("port : " + tempPort);
 
                     Server.sendToSender(fileSelected, userChosen, clientSocket.getRemoteSocketAddress().toString(), tempPort);
                     Server.fileNames.get(username).clear();
@@ -108,7 +110,13 @@ public class SocketHandler implements Runnable {
                 }
 
             } catch (EOFException e) {
-                System.out.println("Client " + username + "has disconnected");
+                try {
+                    System.out.println("Client " + username + " has disconnected");
+                    clientSocket.close();
+                    break;
+                } catch (IOException ex) {
+                    Logger.getLogger(SocketHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } catch (IOException ex) {
                 Logger.getLogger(SocketHandler.class.getName()).log(Level.SEVERE, null, ex);
                 //bc that user disconnected
