@@ -72,7 +72,7 @@ public class waitForMessage extends Thread {
                         //Client.out.writeObject(chat.username);
                         //Client.out.flush();
                         byte[] e = Client.encrypt(Client.serverKey, chat.username.getBytes());
-                        Client.out.writeObject(new String(e));
+                        Client.out.writeObject(e);
                         Client.out.flush();
                         byte[] f = Client.encrypt(Client.serverKey, userFrom.getBytes());
                         Client.out.writeObject(f);
