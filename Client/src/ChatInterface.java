@@ -388,6 +388,7 @@ public class ChatInterface extends javax.swing.JFrame {
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
         String search = searchText.getText();
+        System.out.println("search in GUI   : " + search );
         try {
             Client.sendMessage(search, "~");
         } catch (IOException ex) {

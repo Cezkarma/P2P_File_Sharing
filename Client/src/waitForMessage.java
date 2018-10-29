@@ -55,6 +55,7 @@ public class waitForMessage extends Thread {
                     String search = Client.receiveMsg();
                     String userFrom = Client.receiveMsg();
                     String fileNameFound = lookForFile(search);
+                    System.out.println("Search : " + search );
                     System.out.println("Chosen File : " + fileNameFound);
                     Client.out.writeUTF("$");
                     Client.out.writeUTF(chat.username);
