@@ -71,6 +71,9 @@ public class SocketHandler implements Runnable {
                     Server.fileNames.get(username).clear();
                     
                     while (Server.fileNames.get(username).size() < Server.listOfUsers.size() - 1){}
+                    //System.out.println(Server.fileNames.get(username).size());System.out.println(Server.listOfUsers.size());
+                    
+                    System.out.println("jjj");
                     
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
                     Server.sendFileList(username, fileNamesToSend);
@@ -82,8 +85,12 @@ public class SocketHandler implements Runnable {
                     String userTo = in.readUTF();
                     String fileNameRecv = in.readUTF();
                     
+                    if (Server.fileNames.containsKey(fileNameRecv)) {
+                        fileNameRecv = "."+fileNameRecv;
+                    }
+                    
                     Server.fileNames.get(userTo).put(fileNameRecv, userFrom);
-                    System.out.println("filenamerecv : "+Server.fileNames.get(userTo));
+                    System.out.println("filenamerecv : "+Server.fileNames.get(userTo)+"     "+userTo+ "   "+userFrom + "  "+Server.fileNames.get(userTo).size());
                     
                 } else if (toUser.equals(FILE_CHOSEN)) {
                     String fileSelected = message;
