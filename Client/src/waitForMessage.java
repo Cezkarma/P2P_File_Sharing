@@ -81,7 +81,7 @@ public class waitForMessage extends Thread {
                     Client.portNum = Integer.parseInt(Client.receiveMsg());
 
                     String[] fileNameList = fileNames.split(",");
-                    System.out.println("List Of filenames : " + fileNameList.toString());
+                    System.out.println("List Of filenames : " + fileNames);
                     chat.filechooseDropDown.removeAll();
                     boolean isPlusses = true;
                     for (String s : fileNameList) {
