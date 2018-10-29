@@ -39,7 +39,7 @@ public class SenderThread extends Thread {
     @Override
     public void run() {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
             System.out.println("port number :  "  + portNumber);
             socket = new Socket(receiverIP , portNumber );
             outToReceiver = socket.getOutputStream();
