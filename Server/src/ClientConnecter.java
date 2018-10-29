@@ -18,11 +18,11 @@ public class ClientConnecter extends Thread {
     ServerSocket serverSocket = null;
     Socket clientSocket = null;
     OutputStream outFromServer;
-    DataOutputStream out;
-    ObjectOutputStream objectOut;
+    ObjectOutputStream out;
+    //ObjectOutputStream objectOut;
     InputStream inFromClient;
-    DataInputStream in;
-    ObjectInputStream objectIn;
+    ObjectInputStream in;
+    //ObjectInputStream objectIn;
     
     public ClientConnecter (ServerSocket serverSocket, Socket clientSocket) {
         this.serverSocket = serverSocket;
@@ -35,22 +35,25 @@ public class ClientConnecter extends Thread {
             try {
                 clientSocket = serverSocket.accept();
                 
-                inFromClient = clientSocket.getInputStream();
-                in = new DataInputStream(inFromClient);
-                objectIn = new ObjectInputStream(inFromClient);
                 outFromServer = clientSocket.getOutputStream();
-                out = new DataOutputStream(outFromServer);
-                objectOut = new ObjectOutputStream(outFromServer);
+                out = new ObjectOutputStream(outFromServer);
+                out.flush();
+                //objectOut = new ObjectOutputStream(outFromServer);
+                inFromClient = clientSocket.getInputStream();
+                in = new ObjectInputStream(inFromClient);
+                //objectIn = new ObjectInputStream(inFromClient);
 
-                objectOut.writeObject(Server.myPublicKey);
                 System.out.println("SRVR PKEY - "+Server.myPublicKey.toString());
+                out.writeObject(Server.myPublicKey);
+                out.flush();
                 
-                out.writeUTF(Server.getListOfUsers());
+                out.writeObject(Server.getListOfUsers());
+                out.flush();
                 
-                PublicKey clientKey = (PublicKey) objectIn.readObject();
-                String username = in.readUTF();
+                PublicKey clientKey = (PublicKey) in.readObject();
+                String username = (String) in.readObject();
                 
-                SocketHandler sh = new SocketHandler(clientKey, username, clientSocket);
+                SocketHandler sh = new SocketHandler(clientKey, username, clientSocket, out, in);
                 Thread t = new Thread(sh);
                 t.start();
                 

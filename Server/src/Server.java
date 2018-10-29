@@ -1,11 +1,7 @@
 //package rw354_tut1_server;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -17,10 +13,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,11 +29,11 @@ public class Server extends Thread {
     public static int portNumSender = 7998;
     public static int portNumReceiver = 7998;
     public static OutputStream outFromServer;
-    public static DataOutputStream out;
-    public static ObjectOutputStream objectOut;
+    public static ObjectOutputStream out;
+    //public static ObjectOutputStream objectOut;
     public static InputStream inFromClient;
-    public static DataInputStream in;
-    public static ObjectInputStream objectIn;
+    public static ObjectInputStream in;
+    //public static ObjectInputStream objectIn;
     private static InputStream terminalIn = null;
     private static BufferedReader br = null;
     public static ConcurrentHashMap<String, SocketHandler> listOfUsers = new ConcurrentHashMap<>();
@@ -54,59 +47,62 @@ public class Server extends Thread {
             KeyPair keys = generateKeys();
             myPrivateKey = keys.getPrivate();
             myPublicKey = keys.getPublic();
-            
+
             try {
                 serverSocket = new ServerSocket(portNumber);
                 System.out.println(serverSocket);
             } catch (Exception e) {
                 System.exit(0);
             }
-            
+
             SocketHandler sh = null;
             try {
                 clientSocket = serverSocket.accept();
-                
-                inFromClient = clientSocket.getInputStream();
-                in = new DataInputStream(inFromClient);
-                objectIn = new ObjectInputStream(inFromClient);
+
                 outFromServer = clientSocket.getOutputStream();
-                out = new DataOutputStream(outFromServer);
-                objectOut = new ObjectOutputStream(outFromServer);
-                
-                objectOut.writeObject(myPublicKey);
-                System.out.println("SRVR PKEY - "+myPublicKey.toString());
-                
-                out.writeUTF("");
-                
-                PublicKey clientKey = (PublicKey) objectIn.readObject();
-                String username = in.readUTF();
+                out = new ObjectOutputStream(outFromServer);
+                out.flush();
+                inFromClient = clientSocket.getInputStream();
+                in = new ObjectInputStream(inFromClient);
+                //objectIn = new ObjectInputStream(inFromClient);
+                //objectOut = new ObjectOutputStream(outFromServer);
+
+                System.out.println("SRVR PKEY - " + myPublicKey.toString());
+
+                out.writeObject(myPublicKey);
+                out.flush();
+                out.writeObject("");
+                out.flush();
+
+                PublicKey clientKey = (PublicKey) in.readObject();
+                String username = (String) in.readObject();
                 System.out.println("Welcome: " + username + " to the chat");
-                
-                sh = new SocketHandler(clientKey, username, clientSocket);
-                
+
+                sh = new SocketHandler(clientKey, username, clientSocket, out, in);
+
                 Thread t = new Thread(sh);
                 t.start();
-                
+
                 listOfUsers.put(username, sh);
             } catch (Exception e) {
                 System.err.println(e);
             }
-            
+
             ClientConnecter connector = new ClientConnecter(serverSocket, clientSocket);
             connector.start();
-            
+
             try {
-                
-                outFromServer = clientSocket.getOutputStream();
-                out = new DataOutputStream(outFromServer);
-                
+
+//                outFromServer = clientSocket.getOutputStream();
+//                out = new ObjectOutputStream(outFromServer);
                 String userList = getListOfUsers();
-                out.writeUTF("&" + userList);
-                
+                out.writeObject("&" + userList);
+                out.flush();
+
             } catch (Exception e) {
                 System.err.println("SERVER: " + e);
             }
-            
+
         } catch (Exception ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -130,15 +126,17 @@ public class Server extends Thread {
     }
 
     public static void sendUserList(String userList) {
-        OutputStream outFromServer = null;
-        DataOutputStream out = null;
+        // OutputStream outFromServer = null;
+        ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             try {
-                outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-                out = new DataOutputStream(outFromServer);
+//                outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
+//                out = new ObjectOutputStream(outFromServer);
 
-                out.writeUTF("&" + userList);
+                out = pair.getValue().getOut();
+                out.writeObject("&" + userList);
+                out.flush();
 
             } catch (Exception e) {
                 System.err.println("problem in sendUserList " + e);
@@ -148,15 +146,18 @@ public class Server extends Thread {
     }
 
     public static void broadcast(String username, String message) {
-        OutputStream outFromServer = null;
-        DataOutputStream out = null;
+//        OutputStream outFromServer = null;
+        ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             try {
-                outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-                out = new DataOutputStream(outFromServer);
-                out.writeUTF(username);
-                out.writeUTF(message);
+//                outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
+//                out = new ObjectOutputStream(outFromServer);
+                out = pair.getValue().getOut();
+                out.writeObject(username);
+                out.flush();
+                out.writeObject(message);
+                out.flush();
             } catch (Exception e) {
                 System.err.println("problem in broadcast " + e);
             }
@@ -164,17 +165,21 @@ public class Server extends Thread {
     }
 
     public static void bcFileRequest(String username, String searchString) {
-        OutputStream outFromServer = null;
-        DataOutputStream out = null;
+//        OutputStream outFromServer = null;
+        ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             try {
                 if (!pair.getKey().equals(username)) {
-                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-                    out = new DataOutputStream(outFromServer);
-                    out.writeUTF("~");
-                    out.writeUTF(searchString);
-                    out.writeUTF(username);
+//                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
+//                    out = new ObjectOutputStream(outFromServer);
+                    out = pair.getValue().getOut();
+                    out.writeObject("~");
+                    out.flush();
+                    out.writeObject(searchString);
+                    out.flush();
+                    out.writeObject(username);
+                    out.flush();
                 }
             } catch (Exception e) {
                 System.err.println("problem in broadcast " + e);
@@ -183,16 +188,19 @@ public class Server extends Thread {
     }
 
     public static void whisper(String usernameFrom, String usernameTo, String message) {
-        OutputStream outFromServer = null;
-        DataOutputStream out = null;
+//        OutputStream outFromServer = null;
+        ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             if (pair.getKey().equals(usernameTo) || pair.getKey().equals(usernameFrom)) {
                 try {
-                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-                    out = new DataOutputStream(outFromServer);
-                    out.writeUTF(usernameFrom + " > " + usernameTo);
-                    out.writeUTF(message);
+//                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
+//                    out = new ObjectOutputStream(outFromServer);
+                    out = pair.getValue().getOut();
+                    out.writeObject(usernameFrom + " > " + usernameTo);
+                    out.flush();
+                    out.writeObject(message);
+                    out.flush();
                 } catch (Exception e) {
                     System.err.println("could not whisper : " + e);
                 }
@@ -201,18 +209,21 @@ public class Server extends Thread {
     }
 
     public static void sendFileList(String usernameTo, String fileList) {
-        OutputStream outFromServer = null;
-        DataOutputStream out = null;
+        //OutputStream outFromServer = null;
+        ObjectOutputStream out = null;
 
         System.out.println("1");
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             if (pair.getKey().equals(usernameTo)) {
                 try {
-                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-                    out = new DataOutputStream(outFromServer);
-                    out.writeUTF("$");
-                    out.writeUTF(fileList);
+//                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
+//                    out = new ObjectOutputStream(outFromServer);
+                    out = pair.getValue().getOut();
+                    out.writeObject("$");
+                    out.flush();
+                    out.writeObject(fileList);
+                    out.flush();
 
                     System.out.println("2");
                 } catch (Exception e) {
@@ -223,18 +234,23 @@ public class Server extends Thread {
     }
 
     public static void sendToSender(String filename, String sender, String receiverIP, int newPort) {
-        OutputStream outFromServer = null;
-        DataOutputStream out = null;
+//        OutputStream outFromServer = null;
+        ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             if (pair.getKey().equals(sender)) {
                 try {
-                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-                    out = new DataOutputStream(outFromServer);
-                    out.writeUTF("-");
-                    out.writeUTF(filename);
-                    out.writeUTF(receiverIP);
-                    out.writeUTF(newPort + "");
+//                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
+//                    out = new ObjectOutputStream(outFromServer);
+                    out = pair.getValue().getOut();
+                    out.writeObject("-");
+                    out.flush();
+                    out.writeObject(filename);
+                    out.flush();
+                    out.writeObject(receiverIP);
+                    out.flush();
+                    out.writeObject(newPort + "");
+                    out.flush();
                     portNumSender--;
                     System.out.println("REACHED :: " + portNumSender);
                 } catch (Exception e) {
@@ -245,16 +261,17 @@ public class Server extends Thread {
     }
 
     public static void sendPortNumber(String usernameTo) {
-        OutputStream outFromServer = null;
-        DataOutputStream out = null;
+//        OutputStream outFromServer = null;
+        ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             if (pair.getKey().equals(usernameTo)) {
                 try {
-                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-                    out = new DataOutputStream(outFromServer);
-                    //portNum--;
-                    out.writeUTF(portNumReceiver + "");
+//                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
+//                    out = new ObjectOutputStream(outFromServer);
+                    out = pair.getValue().getOut();
+                    out.writeObject(portNumReceiver + "");
+                    out.flush();
                     portNumReceiver--;
                 } catch (Exception e) {
                     System.err.println("could not whisper : " + e);

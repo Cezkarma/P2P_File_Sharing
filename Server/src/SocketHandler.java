@@ -3,6 +3,8 @@
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.security.PublicKey;
 import java.util.Map;
@@ -23,13 +25,15 @@ public class SocketHandler implements Runnable {
     private String username;
     private Socket clientSocket;
     private PublicKey clientKey;
-    InputStream inFromClient;
-    DataInputStream in;
+    ObjectInputStream in;
+    ObjectOutputStream out;
 
-    public SocketHandler(PublicKey clientKey, String username, Socket clientSocket) {
+    public SocketHandler(PublicKey clientKey, String username, Socket clientSocket, ObjectOutputStream out, ObjectInputStream in) {
         this.clientKey = clientKey;
         this.username = username;
         this.clientSocket = clientSocket;
+        this.out = out;
+        this.in = in;
 
         Server.fileNames.put(username, new ConcurrentHashMap<String, String>());
     }
@@ -37,18 +41,12 @@ public class SocketHandler implements Runnable {
     @Override
     public void run() {
         System.out.println("new client thread created");
-        try {
-            inFromClient = clientSocket.getInputStream();
-            in = new DataInputStream(inFromClient);
-        } catch (Exception e) {
-            System.out.println("could not open stream for this client " + e);
-        }
-
         while (true) {
             try {
-                String toUser = in.readUTF();
-                String message = in.readUTF();
-
+                String toUser = (String) in.readObject();
+                System.out.println("toUser : " + toUser);
+                String message = (String) in.readObject();
+                System.out.println("message : " + message);
                 if (toUser.equals(BROADCAST_MSG)) {
                     Server.broadcast(username, message);
                 } else if (toUser.equals(DISCONNECT_MSG)) {
@@ -60,64 +58,61 @@ public class SocketHandler implements Runnable {
                     } else {
                         System.out.println("No more users connected");
                     }
-
-                    in.close();
-                    inFromClient.close();
                 } else if (toUser.equals(SEARCH_MSG)) {
                     //send port nr to receiver
-                    
+
                     Server.bcFileRequest(username, message);
-                    
-                    
-                    
+
                     //Server.portNum--;
                     Server.fileNames.get(username).clear();
-                    
-                    while (Server.fileNames.get(username).size() < Server.listOfUsers.size() - 1){}
+
+                    while (Server.fileNames.get(username).size() < Server.listOfUsers.size() - 1) {
+                    }
                     //System.out.println(Server.fileNames.get(username).size());System.out.println(Server.listOfUsers.size());
-                    
+
                     System.out.println("jjj");
-                    
+
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
                     Server.sendFileList(username, fileNamesToSend);
                     //Server.sendPortNumber(username);
-                    
+
                     //Server.portNum--;
                 } else if (toUser.equals(FOUND_FILES)) {
                     String userFrom = message;
-                    String userTo = in.readUTF();
-                    userTo = new String(Server.decrypt(userTo.getBytes()));
-                    String fileNameRecv = in.readUTF();
-                    
+                    String userTo = (String) in.readObject();
+//                    userTo = new String(Server.decrypt(userTo.getBytes()));
+                    String fileNameRecv = (String) in.readObject();
+
                     if (Server.fileNames.get(userTo).containsKey(fileNameRecv)) {
-                        fileNameRecv = "."+fileNameRecv;
+                        fileNameRecv = "." + fileNameRecv;
                     }
-                    
+
                     Server.fileNames.get(userTo).put(fileNameRecv, userFrom);
-                    System.out.println("filenamerecv : "+Server.fileNames.get(userTo)+"     "+userTo+ "   "+userFrom + "  "+Server.fileNames.get(userTo).size());
-                    
+                    System.out.println("filenamerecv : " + Server.fileNames.get(userTo) + "     " + userTo + "   " + userFrom + "  " + Server.fileNames.get(userTo).size());
+
                 } else if (toUser.equals(FILE_CHOSEN)) {
                     String fileSelected = message;
-                    String junk = in.readUTF();
-                    int tempPort = Integer.parseInt(in.readUTF());
-                    
+                    String junk = (String) in.readObject();
+                    int tempPort = Integer.parseInt((String) in.readObject());
+
                     String userChosen = Server.fileNames.get(username).get(fileSelected);
 
-                    System.out.println("file selected : "+fileSelected);
-                    System.out.println("user selected : "+userChosen);
-                    
-                    Server.sendToSender(fileSelected, userChosen , clientSocket.getRemoteSocketAddress().toString(), tempPort);
+                    System.out.println("file selected : " + fileSelected);
+                    System.out.println("user selected : " + userChosen);
+
+                    Server.sendToSender(fileSelected, userChosen, clientSocket.getRemoteSocketAddress().toString(), tempPort);
                     Server.fileNames.get(username).clear();
-                    
+
                 } else {
                     Server.whisper(username, toUser, message);
                 }
             } catch (IOException ex) {
-                System.err.println(ex);
+                Logger.getLogger(SocketHandler.class.getName()).log(Level.SEVERE, null, ex);
                 //bc that user disconnected
                 try {
                     clientSocket.close();
                 } catch (Exception e) {
+                    Logger.getLogger(SocketHandler.class.getName()).log(Level.SEVERE, null, ex);
                     System.err.println("could not disconnect " + e);
                 }
 
@@ -133,15 +128,18 @@ public class SocketHandler implements Runnable {
         return clientSocket;
     }
 
+    public ObjectOutputStream getOut() {
+        return out;
+    }
+
     public static String hashToString(ConcurrentHashMap<String, String> map) {
         String toSend = "";
         for (Map.Entry<String, String> pair : map.entrySet()) {
-            toSend = toSend + pair.getKey()+ ",";
+            toSend = toSend + pair.getKey() + ",";
         }
-        
-        System.out.println("TO SEND ::: "+toSend);
-        
+
+        System.out.println("TO SEND ::: " + toSend);
+
         return toSend.substring(0, toSend.length() - 1);
     }
-
 }
