@@ -69,9 +69,10 @@ public class waitForMessage extends Thread {
                     String filename = Client.receiveMsg();
                     String receiverIP = Client.receiveMsg();
                     Client.portNum = Integer.parseInt(Client.receiveMsg());
+                    int tempPort = Client.portNum;
                     receiverIP = receiverIP.substring(1, receiverIP.indexOf(':'));
-                    System.out.println("Filename : " + filename + "   and   receiverIP :  "+ receiverIP);
-                    SenderThread senderThread = new SenderThread(filename , receiverIP);
+                    System.out.println("portNumber : "+ Client.portNum+ " Filename : " + filename + "   and   receiverIP :  "+ receiverIP);
+                    SenderThread senderThread = new SenderThread(filename , receiverIP,tempPort);
                     senderThread.start();
                     break;    
                 case '$'://

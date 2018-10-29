@@ -19,7 +19,7 @@ public class Client {
     public static String fileName;
     public static int portNum;
     public boolean valid_connection = true;
-    private static int port = 8000;
+    private final static int port = 8000;
     static String serverName = "146.232.50.162";
     static OutputStream outToServer;
     static DataOutputStream out;

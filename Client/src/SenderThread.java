@@ -29,17 +29,18 @@ public class SenderThread extends Thread {
     Socket socket = null;
     public static int blockSize = 100;
     public static int numOfBlocks = 50;
-    public static int port = Client.portNum;
-    public SenderThread(String filename , String receiverIP) {
+    public static int portNumber ;
+    public SenderThread(String filename , String receiverIP, int portNumber) {
         this.filename = filename;
         this.receiverIP = receiverIP;   
+        this.portNumber = portNumber;
     }
     
     @Override
     public void run() {
         try {
-            System.out.println("port number :  "  + port);
-            socket = new Socket(receiverIP , port );
+            System.out.println("port number :  "  + portNumber);
+            socket = new Socket(receiverIP , portNumber );
             outToReceiver = socket.getOutputStream();
             out = new DataOutputStream(outToReceiver);
             String cwd = System.getProperty("user.dir");
