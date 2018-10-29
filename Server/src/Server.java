@@ -175,6 +175,8 @@ public class Server extends Thread {
         OutputStream outFromServer = null;
         DataOutputStream out = null;
         
+        System.out.println("1");
+        
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             if (pair.getKey().equals(usernameTo)) {
                 try {
@@ -182,6 +184,8 @@ public class Server extends Thread {
                     out = new DataOutputStream(outFromServer);
                     out.writeUTF("$");
                     out.writeUTF(fileList);
+                    
+                    System.out.println("2");
                 } catch (Exception e) {
                     System.err.println("could not whisper : " + e);
                 }
