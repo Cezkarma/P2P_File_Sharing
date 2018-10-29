@@ -19,7 +19,8 @@ import java.util.logging.Logger;
 
 public class Server extends Thread {
     
-    public static int portNum = 7998;
+    public static int portNumSender = 7998;
+    public static int portNumReceiver = 7998;    
     public static OutputStream outFromServer;
     public static DataOutputStream out;
     public static InputStream inFromClient;
@@ -199,9 +200,9 @@ public class Server extends Thread {
                     out.writeUTF("-");
                     out.writeUTF(filename);
                     out.writeUTF(receiverIP);
-                    out.writeUTF(portNum+"");
-                    portNum--;
-                    System.out.println("REACHED :: "+filename);
+                    out.writeUTF(portNumSender+"");
+                    portNumSender--;
+                    System.out.println("REACHED :: "+portNumSender);
                 } catch (Exception e) {
                     System.err.println("could not whisper : " + e);
                 }
@@ -218,7 +219,9 @@ public class Server extends Thread {
                 try {
                     outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
                     out = new DataOutputStream(outFromServer);
-                    out.writeUTF(portNum+"");
+                    //portNum--;
+                    out.writeUTF(portNumReceiver+"");
+                    portNumReceiver--;
                 } catch (Exception e) {
                     System.err.println("could not whisper : " + e);
                 }

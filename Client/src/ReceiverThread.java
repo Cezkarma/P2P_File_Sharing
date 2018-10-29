@@ -26,6 +26,7 @@ public class ReceiverThread extends Thread{
     }
     
     public void run(){
+            System.out.println("PORTNUM ::: "+portNum);
         try {
             
             String cwd = System.getProperty("user.dir");
