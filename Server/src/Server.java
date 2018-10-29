@@ -188,7 +188,7 @@ public class Server extends Thread {
             }
         }
     }
-    public static void sendToSender(String filename , String sender , String receiverIP){
+    public static void sendToSender(String filename , String sender , String receiverIP, int newPort){
         OutputStream outFromServer = null;
         DataOutputStream out = null;
         
@@ -200,7 +200,7 @@ public class Server extends Thread {
                     out.writeUTF("-");
                     out.writeUTF(filename);
                     out.writeUTF(receiverIP);
-                    out.writeUTF(portNumSender+"");
+                    out.writeUTF(newPort+"");
                     portNumSender--;
                     System.out.println("REACHED :: "+portNumSender);
                 } catch (Exception e) {

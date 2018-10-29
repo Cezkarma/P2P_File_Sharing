@@ -74,7 +74,7 @@ public class SocketHandler implements Runnable {
                     
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
                     Server.sendFileList(username, fileNamesToSend);
-                    Server.sendPortNumber(username);
+                    //Server.sendPortNumber(username);
                     
                     //Server.portNum--;
                 } else if (toUser.equals(FOUND_FILES)) {
@@ -87,12 +87,15 @@ public class SocketHandler implements Runnable {
                     
                 } else if (toUser.equals(FILE_CHOSEN)) {
                     String fileSelected = message;
+                    String junk = in.readUTF();
+                    int tempPort = Integer.parseInt(in.readUTF());
+                    
                     String userChosen = Server.fileNames.get(username).get(fileSelected);
 
                     System.out.println("file selected : "+fileSelected);
                     System.out.println("user selected : "+userChosen);
                     
-                    Server.sendToSender(fileSelected, userChosen , clientSocket.getRemoteSocketAddress().toString());
+                    Server.sendToSender(fileSelected, userChosen , clientSocket.getRemoteSocketAddress().toString(), tempPort);
                     Server.fileNames.get(username).clear();
                     
                 } else {
