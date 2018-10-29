@@ -80,13 +80,10 @@ public class Client {
             
             inFromServer = client.getInputStream();
             in = new ObjectInputStream(inFromServer);
-            System.out.println("myPublicKey  : " + myPublicKey.toString());
-            System.out.println("1");
             serverKey = receiveObj();
-            System.out.println("2");
 
 //            System.out.println("ServerKey  : " + serverKey.toString() );
-            String userList_intial = receiveMsg();
+            String userList_intial = (String)in.readObject();//receiveMsg();
             System.out.println("Received initial user list" + userList_intial);
             out.writeObject(myPublicKey);
             out.flush();
@@ -120,19 +117,35 @@ public class Client {
     }
 
     public static void sendMessage(String msg, String usr) throws IOException {
-        out.writeObject(usr);
-        out.flush();
-        out.writeObject(msg);
-        out.flush();
+        try {
+            byte[] l = encrypt(serverKey, usr.getBytes());
+            out.writeObject(l);
+            out.flush();
+            byte[] k = encrypt(serverKey, msg.getBytes());
+            out.writeObject(k);
+            out.flush();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     // Disconnects the user : closes all dataStreams as well as the socket. It also notifies the Server beforehand
     public static void disconnect(String usr) {
         try {
             if (ChatInterface.connected) {
-                out.writeObject(DISCONNECT_MSG);
+                byte[] l = encrypt(serverKey, DISCONNECT_MSG.getBytes());
+                out.writeObject(l);
                 out.flush();
-                out.writeObject(usr);
+                byte[] k = encrypt(serverKey, usr.getBytes());
+                out.writeObject(k);
                 out.flush();
                 out.close();
                 outToServer.close();
@@ -143,15 +156,23 @@ public class Client {
             chat.dispose();
         } catch (IOException ex) {
             System.err.println("Disconnection Error : " + ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
     public static PublicKey receiveObj() throws IOException {
         PublicKey inputFromServer = null;
         try {
-            System.out.println("About to receive object");
             inputFromServer = (PublicKey) in.readObject();
-            System.out.println("Just Received object");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -159,7 +180,21 @@ public class Client {
     }
 
     public static String receiveMsg() throws IOException, ClassNotFoundException {
-        String inputFromServer = (String) in.readObject();
+        byte[] temp = (byte[]) in.readObject();
+        String inputFromServer = new String();
+        try {
+            inputFromServer = new String(decrypt(temp));
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return inputFromServer;
     }
 

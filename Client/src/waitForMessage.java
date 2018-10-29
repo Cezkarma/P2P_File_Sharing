@@ -66,16 +66,19 @@ public class waitForMessage extends Thread {
                         String fileNameFound = lookForFile(search);
                         System.out.println("Search : " + search );
                         System.out.println("Chosen File : " + fileNameFound);
-                        Client.out.writeObject("$");
+                        byte[] l = Client.encrypt(Client.serverKey, "$".getBytes());
+                        Client.out.writeObject(l);
                         Client.out.flush();
-                        Client.out.writeObject(chat.username);
+                        //Client.out.writeObject(chat.username);
+                        //Client.out.flush();
+                        byte[] e = Client.encrypt(Client.serverKey, chat.username.getBytes());
+                        Client.out.writeObject(new String(e));
                         Client.out.flush();
-                        //byte[] e = Client.encrypt(Client.serverKey, chat.username.getBytes());
-                        //Client.out.writeObject(new String(e));
+                        byte[] f = Client.encrypt(Client.serverKey, userFrom.getBytes());
+                        Client.out.writeObject(f);
                         Client.out.flush();
-                        Client.out.writeObject(userFrom);
-                        Client.out.flush();
-                        Client.out.writeObject(fileNameFound);
+                        byte[] g = Client.encrypt(Client.serverKey, fileNameFound.getBytes());
+                        Client.out.writeObject(g);
                         Client.out.flush();
                         
                         break;
@@ -97,22 +100,19 @@ public class waitForMessage extends Thread {
                         String fileNames = Client.receiveMsg();
                         //Client.portNum = Integer.parseInt(Client.receiveMsg());
                         
-                        String[] fileNameList = fileNames.split(",");
-                        System.out.println("List Of filenames : " + fileNames);
-                        chat.filechooseDropDown.removeAll();
                         boolean isPlusses = true;
-                        for (String s : fileNameList) {
-                            if((!s.equals("+"))&&(s.charAt(0) != '.')){
-                                isPlusses = false;
-                                System.out.println("insode filelist");
-                                //chat.filechooseDropDown.add(s+"add");
-                                chat.filechooseDropDown.addItem(s);
-                            }
+                        if(fileNames.length() != 0 ){
+                            String[] fileNameList = fileNames.split(",");
+                            chat.filechooseDropDown.removeAll();
+                                for (String s : fileNameList) {
+                                    if((!s.equals("+"))&&(s.charAt(0) != '.')){
+                                        isPlusses = false;
+                                        chat.filechooseDropDown.addItem(s);
+                                    }
+                                }
                         }
-                        if(isPlusses){
+                        if(isPlusses||fileNames.length()==0){
                             JOptionPane.showMessageDialog(chat, "No file found");
-                            
-                            
                         }
                         //convert and display
                         break;
