@@ -5,19 +5,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.swing.JOptionPane;
 
 public class Client {
-    
+
+    public static PrivateKey myPrivateKey;
+    public static PublicKey myPublicKey;
     public static boolean isPaused = false;
     private static String DISCONNECT_MSG = "@";
     public static String fileName;
-    public static int portNum=7999;
+    public static int portNum = 7999;
     public boolean valid_connection = true;
     private final static int port = 8000;
     static String serverName = "146.232.50.162";
@@ -32,12 +41,15 @@ public class Client {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
         // TODO code application logic here
         String message;
         String who;
         chat = new ChatInterface();
         chat.show();
+        KeyPair keys = generateKeys();
+        myPrivateKey = keys.getPrivate();
+        myPublicKey = keys.getPublic();
     }
 
     //Connects the client sockect to the server socket. 
@@ -122,6 +134,24 @@ public class Client {
         }
 
         return valid;
+    }
+
+    public static KeyPair generateKeys() throws NoSuchAlgorithmException {
+        KeyPairGenerator k = KeyPairGenerator.getInstance("RSA");
+        k.initialize(2048);
+        return k.genKeyPair();
+    }
+
+    public static byte[] encrypt(PublicKey key, byte[] toEncrypt) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        Cipher c = Cipher.getInstance("RSA");
+        c.init(Cipher.ENCRYPT_MODE, key);
+        return c.doFinal(toEncrypt);
+    }
+
+    public static byte[] decrypt(byte[] toDecrypt) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+        Cipher c = Cipher.getInstance("RSA");
+        c.init(Cipher.DECRYPT_MODE, myPrivateKey);
+        return c.doFinal(toDecrypt);
     }
 
 }

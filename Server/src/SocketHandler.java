@@ -83,6 +83,7 @@ public class SocketHandler implements Runnable {
                 } else if (toUser.equals(FOUND_FILES)) {
                     String userFrom = message;
                     String userTo = in.readUTF();
+                    userTo = new String(Server.decrypt(userTo.getBytes()));
                     String fileNameRecv = in.readUTF();
                     
                     if (Server.fileNames.get(userTo).containsKey(fileNameRecv)) {

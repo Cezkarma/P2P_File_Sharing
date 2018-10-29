@@ -5,6 +5,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import java.lang.Object;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class waitForMessage extends Thread {
 
@@ -39,72 +44,78 @@ public class waitForMessage extends Thread {
         chat.addAllusers(list_of_users.substring(1, list_of_users.length()));
         
         while (true) {
-            String anything = Client.receiveMsg();
-            switch (anything.charAt(0)) {
-                case '&'://user list
-                    String connectedUsr = anything.substring(1, anything.length());
-                    chat.addAllusers(connectedUsr);
-                    break;
-                case '#'://
-                    String disconnectedUsr = Client.receiveMsg();
-                    String list_of = Client.receiveMsg().substring(1);
-                    chat.removeUsers(disconnectedUsr, list_of);
-                    break;
-                case '~'://
-                    System.out.println("~~~~~~~~~~~~~~~~");
-                    String search = Client.receiveMsg();
-                    String userFrom = Client.receiveMsg();
-                    String fileNameFound = lookForFile(search);
-                    System.out.println("Search : " + search );
-                    System.out.println("Chosen File : " + fileNameFound);
-                    Client.out.writeUTF("$");
-                    Client.out.writeUTF(chat.username);
-                    Client.out.writeUTF(userFrom);
-                    Client.out.writeUTF(fileNameFound);
-                    
-                    break;
-                 case '-'://
-                                         System.out.println("---------------");
-
-                    String filename = Client.receiveMsg();
-                    String receiverIP = Client.receiveMsg();
-                    int tempPort = Integer.parseInt(Client.receiveMsg());
-                    Client.portNum = tempPort;
-                    receiverIP = receiverIP.substring(1, receiverIP.indexOf(':'));
-                    System.out.println("portNumber : "+ Client.portNum+ " Filename : " + filename + "   and   receiverIP :  "+ receiverIP);
-                    SenderThread senderThread = new SenderThread(filename , receiverIP,tempPort);
-                    senderThread.start();
-                    break;    
-                case '$'://
-                    System.out.println("$$$$$$$$$$$$$$$$$$");
-                    
-                    String fileNames = Client.receiveMsg();
-                    //Client.portNum = Integer.parseInt(Client.receiveMsg());
-
-                    String[] fileNameList = fileNames.split(",");
-                    System.out.println("List Of filenames : " + fileNames);
-                    chat.filechooseDropDown.removeAll();
-                    boolean isPlusses = true;
-                    for (String s : fileNameList) {
-                        if((!s.equals("+"))&&(s.charAt(0) != '.')){
-                            isPlusses = false;
-                            System.out.println("insode filelist");
-                            //chat.filechooseDropDown.add(s+"add");
-                            chat.filechooseDropDown.addItem(s);
-                        }
-                    }
-                    if(isPlusses){
-                        JOptionPane.showMessageDialog(chat, "No file found");
+            try {
+                String anything = Client.receiveMsg();
+                switch (anything.charAt(0)) {
+                    case '&'://user list
+                        String connectedUsr = anything.substring(1, anything.length());
+                        chat.addAllusers(connectedUsr);
+                        break;
+                    case '#'://
+                        String disconnectedUsr = Client.receiveMsg();
+                        String list_of = Client.receiveMsg().substring(1);
+                        chat.removeUsers(disconnectedUsr, list_of);
+                        break;
+                    case '~'://
+                        System.out.println("~~~~~~~~~~~~~~~~");
+                        String search = Client.receiveMsg();
+                        String userFrom = Client.receiveMsg();
+                        String fileNameFound = lookForFile(search);
+                        System.out.println("Search : " + search );
+                        System.out.println("Chosen File : " + fileNameFound);
+                        Client.out.writeUTF("$");
+//                        Client.out.writeUTF(chat.username);
+                        byte[] e = Client.encrypt(Server.myPublicKey, chat.username.getBytes());
+                        Client.out.writeUTF(new String(e));
+                        Client.out.writeUTF(userFrom);
+                        Client.out.writeUTF(fileNameFound);
                         
-                    
-                    }
-                    //convert and display
-                    break;
-                default:
-                    String who = anything;
-                    String message = Client.receiveMsg();
-                    chat.printMsg(message, who);
-                    break;
+                        break;
+                    case '-'://
+                        System.out.println("---------------");
+                        
+                        String filename = Client.receiveMsg();
+                        String receiverIP = Client.receiveMsg();
+                        int tempPort = Integer.parseInt(Client.receiveMsg());
+                        Client.portNum = tempPort;
+                        receiverIP = receiverIP.substring(1, receiverIP.indexOf(':'));
+                        System.out.println("portNumber : "+ Client.portNum+ " Filename : " + filename + "   and   receiverIP :  "+ receiverIP);
+                        SenderThread senderThread = new SenderThread(filename , receiverIP,tempPort);
+                        senderThread.start();
+                        break;
+                    case '$'://
+                        System.out.println("$$$$$$$$$$$$$$$$$$");
+                        
+                        String fileNames = Client.receiveMsg();
+                        //Client.portNum = Integer.parseInt(Client.receiveMsg());
+                        
+                        String[] fileNameList = fileNames.split(",");
+                        System.out.println("List Of filenames : " + fileNames);
+                        chat.filechooseDropDown.removeAll();
+                        boolean isPlusses = true;
+                        for (String s : fileNameList) {
+                            if((!s.equals("+"))&&(s.charAt(0) != '.')){
+                                isPlusses = false;
+                                System.out.println("insode filelist");
+                                //chat.filechooseDropDown.add(s+"add");
+                                chat.filechooseDropDown.addItem(s);
+                            }
+                        }
+                        if(isPlusses){
+                            JOptionPane.showMessageDialog(chat, "No file found");
+                            
+                            
+                        }
+                        //convert and display
+                        break;
+                    default:
+                        String who = anything;
+                        String message = Client.receiveMsg();
+                        chat.printMsg(message, who);
+                        break;
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(waitForMessage.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
