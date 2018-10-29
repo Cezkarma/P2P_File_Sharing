@@ -547,11 +547,24 @@ public class ChatInterface extends javax.swing.JFrame {
     }
     
     public static void progressTheDownloadBar(int prog){
+        
         downloadProgBar.setValue(prog);
+        downloadProgBar.setStringPainted(true);
+        downloadProgBar.setString(prog+"%");
+        if(prog==100){
+            downloadProgBar.setString("Download complete");
+            downloadProgBar.setValue(0);
+        }
     }
     
     public static void progressTheUploadBar(int prog){
         uploadProgBar.setValue(prog);
+        uploadProgBar.setStringPainted(true);
+        uploadProgBar.setString(prog+"%");
+        if(prog==100){
+            uploadProgBar.setString("Upload complete");
+            uploadProgBar.setValue(0);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
