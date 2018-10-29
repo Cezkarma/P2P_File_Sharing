@@ -39,6 +39,7 @@ public class SenderThread extends Thread {
     @Override
     public void run() {
         try {
+            Thread.sleep(1000);
             System.out.println("port number :  "  + portNumber);
             socket = new Socket(receiverIP , portNumber );
             outToReceiver = socket.getOutputStream();
@@ -88,6 +89,8 @@ public class SenderThread extends Thread {
             }
             
         } catch (IOException ex) {
+            Logger.getLogger(SenderThread.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
             Logger.getLogger(SenderThread.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
