@@ -60,11 +60,13 @@ public class SenderThread extends Thread {
             
             try {
                 for (int i = 0; i < numOfBlocks - 1; i++) {
+                    System.out.print(i);
                     byte[] byteArray = new byte[blockSize];
                     raf.read(byteArray);
                     out.write(byteArray, 0, byteArray.length);
                     out.flush();
                     tempCount -= blockSize;
+                    Client.chat.progressTheUploadBar((int) 100 * i/50);
 //                    for(int j = 0 ; j < byteArray.length; j++){
 //                        System.out.print(byteArray[j] );
 //                    }
@@ -77,6 +79,7 @@ public class SenderThread extends Thread {
                 raf.read(byteArray);
                 out.write(byteArray, 0, byteArray.length);
                 out.flush();
+                Client.chat.progressTheUploadBar((int) 100);
                 
 
             } catch (IOException ex) {
