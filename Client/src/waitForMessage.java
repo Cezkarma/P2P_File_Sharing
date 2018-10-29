@@ -68,8 +68,8 @@ public class waitForMessage extends Thread {
 
                     String filename = Client.receiveMsg();
                     String receiverIP = Client.receiveMsg();
-                    Client.portNum = Integer.parseInt(Client.receiveMsg());
-                    int tempPort = Client.portNum;
+                    int tempPort = Integer.parseInt(Client.receiveMsg());
+                    Client.portNum = tempPort;
                     receiverIP = receiverIP.substring(1, receiverIP.indexOf(':'));
                     System.out.println("portNumber : "+ Client.portNum+ " Filename : " + filename + "   and   receiverIP :  "+ receiverIP);
                     SenderThread senderThread = new SenderThread(filename , receiverIP,tempPort);
@@ -79,7 +79,7 @@ public class waitForMessage extends Thread {
                     System.out.println("$$$$$$$$$$$$$$$$$$");
                     
                     String fileNames = Client.receiveMsg();
-                    Client.portNum = Integer.parseInt(Client.receiveMsg());
+                    //Client.portNum = Integer.parseInt(Client.receiveMsg());
 
                     String[] fileNameList = fileNames.split(",");
                     System.out.println("List Of filenames : " + fileNames);

@@ -401,6 +401,8 @@ public class ChatInterface extends javax.swing.JFrame {
             // TODO add your handling code here:
             String fileSelected = filechooseDropDown.getSelectedItem();
             Client.sendMessage(fileSelected, "*");
+            Client.portNum--;
+            Client.sendMessage(""+Client.portNum, " ");
             ReceiverThread receiverThread = new ReceiverThread(fileSelected);
             receiverThread.start();
             Client.fileName = fileSelected;

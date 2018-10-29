@@ -17,7 +17,7 @@ public class Client {
     public static boolean isPaused = false;
     private static String DISCONNECT_MSG = "@";
     public static String fileName;
-    public static int portNum;
+    public static int portNum=7999;
     public boolean valid_connection = true;
     private final static int port = 8000;
     static String serverName = "146.232.50.162";

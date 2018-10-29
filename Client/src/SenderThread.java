@@ -93,6 +93,7 @@ public class SenderThread extends Thread {
         try {
             out.close();
             outToReceiver.close();
+            socket.close();
         } catch (IOException ex) {
             Logger.getLogger(SenderThread.class.getName()).log(Level.SEVERE, null, ex);
         }
