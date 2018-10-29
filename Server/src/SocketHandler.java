@@ -85,7 +85,7 @@ public class SocketHandler implements Runnable {
                     String userTo = in.readUTF();
                     String fileNameRecv = in.readUTF();
                     
-                    if (Server.fileNames.containsKey(fileNameRecv)) {
+                    if (Server.fileNames.get(userTo).containsKey(fileNameRecv)) {
                         fileNameRecv = "."+fileNameRecv;
                     }
                     
