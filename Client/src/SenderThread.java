@@ -89,6 +89,13 @@ public class SenderThread extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(SenderThread.class.getName()).log(Level.SEVERE, null, ex);
         }
+        try {
+            out.close();
+            outToReceiver.close();
+        } catch (IOException ex) {
+            Logger.getLogger(SenderThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
     
     
