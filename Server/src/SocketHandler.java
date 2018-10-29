@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.security.PublicKey;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -21,10 +22,12 @@ public class SocketHandler implements Runnable {
 
     private String username;
     private Socket clientSocket;
+    private PublicKey clientKey;
     InputStream inFromClient;
     DataInputStream in;
 
-    public SocketHandler(String username, Socket clientSocket) {
+    public SocketHandler(PublicKey clientKey, String username, Socket clientSocket) {
+        this.clientKey = clientKey;
         this.username = username;
         this.clientSocket = clientSocket;
 

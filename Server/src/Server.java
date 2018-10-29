@@ -6,6 +6,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -35,8 +37,10 @@ public class Server extends Thread {
     public static int portNumReceiver = 7998;
     public static OutputStream outFromServer;
     public static DataOutputStream out;
+    public static ObjectOutputStream objectOut;
     public static InputStream inFromClient;
     public static DataInputStream in;
+    public static ObjectInputStream objectIn;
     private static InputStream terminalIn = null;
     private static BufferedReader br = null;
     public static ConcurrentHashMap<String, SocketHandler> listOfUsers = new ConcurrentHashMap<>();
@@ -64,21 +68,26 @@ public class Server extends Thread {
                 
                 inFromClient = clientSocket.getInputStream();
                 in = new DataInputStream(inFromClient);
+                objectIn = new ObjectInputStream(inFromClient);
                 outFromServer = clientSocket.getOutputStream();
                 out = new DataOutputStream(outFromServer);
+                objectOut = new ObjectOutputStream(outFromServer);
+                
+                objectOut.writeObject(myPublicKey);
+                System.out.println("SRVR PKEY - "+myPublicKey.toString());
                 
                 out.writeUTF("");
                 
+                PublicKey clientKey = (PublicKey) objectIn.readObject();
                 String username = in.readUTF();
                 System.out.println("Welcome: " + username + " to the chat");
                 
-                sh = new SocketHandler(username, clientSocket);
+                sh = new SocketHandler(clientKey, username, clientSocket);
                 
                 Thread t = new Thread(sh);
                 t.start();
                 
                 listOfUsers.put(username, sh);
-                
             } catch (Exception e) {
                 System.err.println(e);
             }
