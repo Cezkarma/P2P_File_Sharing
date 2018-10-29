@@ -35,14 +35,14 @@ public class Client {
     private final static int port = 8000;
     static String serverName = "146.232.50.162";
     static OutputStream outToServer;
-    static DataOutputStream out;
+    static ObjectOutputStream out;
     static InputStream inFromServer;
-    static DataInputStream in;
+    static ObjectInputStream in;
     static Socket client;
     public static ChatInterface chat;
     public static String IP_ad;
-    public static ObjectOutputStream objectOut;
-    public static ObjectInputStream objectIn;
+//    public static ObjectOutputStream objectOut;
+//    public static ObjectInputStream objectIn;
     public static PublicKey serverKey;
 
     /**
@@ -57,12 +57,13 @@ public class Client {
         KeyPair keys = generateKeys();
         myPrivateKey = keys.getPrivate();
         myPublicKey = keys.getPublic();
+        System.out.println("IN MAIN");
     }
 
     //Connects the client sockect to the server socket. 
     //Receivees the list of currently connected users and sends username.
     // It calls method waitForMessage which starts a thread and conctantly looks for incoming messages
-    public static void connect(String serverName, String usr) throws IOException {
+    public static void connect(String serverName, String usr) throws IOException, ClassNotFoundException {
         boolean validIP = false;
         try {
             IP_ad = chat.IP;
@@ -73,19 +74,33 @@ public class Client {
                 JOptionPane.showMessageDialog(chat, "invalid IP");
                 return;
             }
+            outToServer = client.getOutputStream();
+//            objectOut = new ObjectOutputStream(outToServer);
+            out = new ObjectOutputStream(outToServer);
+            
+            inFromServer = client.getInputStream();
+            in = new ObjectInputStream(inFromServer);
+            System.out.println("myPublicKey  : " + myPublicKey.toString());
+            System.out.println("1");
             serverKey = receiveObj();
-            System.out.println("ServerKey  : " + serverKey.toString() );
+            System.out.println("2");
+
+//            System.out.println("ServerKey  : " + serverKey.toString() );
             String userList_intial = receiveMsg();
+            System.out.println("Received initial user list" + userList_intial);
+            out.writeObject(myPublicKey);
+            out.flush();
             boolean validUsrn = checkUsername(userList_intial, chat.username);
             if (!validUsrn) {
                 JOptionPane.showMessageDialog(chat, "Username taken , new username : " + chat.username);
             }
-            outToServer = client.getOutputStream();
-            objectOut = new ObjectOutputStream(outToServer);
-            out = new DataOutputStream(outToServer);
-            objectOut.writeObject(myPublicKey);
+//            outToServer = client.getOutputStream();
+////            objectOut = new ObjectOutputStream(outToServer);
+//            out = new ObjectOutputStream(outToServer);
+////            objectOut.writeObject(myPublicKey);
             System.out.println("myPublicKey  : " + myPublicKey.toString());
-            out.writeUTF(chat.username);
+            out.writeObject(chat.username);
+            out.flush();
             waitForMessage waitFor = new waitForMessage(chat);
 
             waitFor.start();
@@ -105,16 +120,20 @@ public class Client {
     }
 
     public static void sendMessage(String msg, String usr) throws IOException {
-        out.writeUTF(usr);
-        out.writeUTF(msg);
+        out.writeObject(usr);
+        out.flush();
+        out.writeObject(msg);
+        out.flush();
     }
 
     // Disconnects the user : closes all dataStreams as well as the socket. It also notifies the Server beforehand
     public static void disconnect(String usr) {
         try {
             if (ChatInterface.connected) {
-                out.writeUTF(DISCONNECT_MSG);
-                out.writeUTF(usr);
+                out.writeObject(DISCONNECT_MSG);
+                out.flush();
+                out.writeObject(usr);
+                out.flush();
                 out.close();
                 outToServer.close();
                 in.close();
@@ -130,19 +149,17 @@ public class Client {
     public static PublicKey receiveObj() throws IOException {
         PublicKey inputFromServer = null;
         try {
-            inFromServer = client.getInputStream();
-            objectIn = new ObjectInputStream(inFromServer);
-            inputFromServer = (PublicKey) objectIn.readObject();
+            System.out.println("About to receive object");
+            inputFromServer = (PublicKey) in.readObject();
+            System.out.println("Just Received object");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
             return inputFromServer;
     }
 
-    public static String receiveMsg() throws IOException {
-        inFromServer = client.getInputStream();
-        in = new DataInputStream(inFromServer);
-        String inputFromServer = in.readUTF();
+    public static String receiveMsg() throws IOException, ClassNotFoundException {
+        String inputFromServer = (String) in.readObject();
         return inputFromServer;
     }
 

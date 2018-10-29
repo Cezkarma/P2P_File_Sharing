@@ -324,7 +324,11 @@ public class ChatInterface extends javax.swing.JFrame {
                 username = "All" + (int) (Math.random() * 100);
                 JOptionPane.showMessageDialog(rootPane, "Cannot choose 'ALL' as your username. Your new Username is : " + username);
             }
-            Client.connect(serverName, username);
+            try {
+                Client.connect(serverName, username);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(ChatInterface.class.getName()).log(Level.SEVERE, null, ex);
+            }
             reset_btn.setEnabled(true);
             connected = true;
         } catch (IOException ex) {

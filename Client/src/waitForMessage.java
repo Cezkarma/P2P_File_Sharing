@@ -30,8 +30,11 @@ public class waitForMessage extends Thread {
         } catch (IOException ex) {
             ChatInterface.connected = false;
             JOptionPane.showMessageDialog(chat, "You are disconnected from the server.");
+            Logger.getLogger(waitForMessage.class.getName()).log(Level.SEVERE, null, ex);
 
         } catch (InterruptedException ex) {
+            Logger.getLogger(waitForMessage.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(waitForMessage.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -39,7 +42,7 @@ public class waitForMessage extends Thread {
 
     //An infinite while loop the is looking for incoming messages
     //It checks the code of the message and based on that categorizes the follwoing message
-    public static void waitForMsg(ChatInterface chat) throws IOException, InterruptedException {
+    public static void waitForMsg(ChatInterface chat) throws IOException, InterruptedException, ClassNotFoundException {
         String list_of_users = Client.receiveMsg();
         chat.addAllusers(list_of_users.substring(1, list_of_users.length()));
         
@@ -63,12 +66,17 @@ public class waitForMessage extends Thread {
                         String fileNameFound = lookForFile(search);
                         System.out.println("Search : " + search );
                         System.out.println("Chosen File : " + fileNameFound);
-                        Client.out.writeUTF("$");
-                        //Client.out.writeUTF(chat.username);
-                        byte[] e = Client.encrypt(Client.serverKey, chat.username.getBytes());
-                        Client.out.writeUTF(new String(e));
-                        Client.out.writeUTF(userFrom);
-                        Client.out.writeUTF(fileNameFound);
+                        Client.out.writeObject("$");
+                        Client.out.flush();
+                        Client.out.writeObject(chat.username);
+                        Client.out.flush();
+                        //byte[] e = Client.encrypt(Client.serverKey, chat.username.getBytes());
+                        //Client.out.writeObject(new String(e));
+                        Client.out.flush();
+                        Client.out.writeObject(userFrom);
+                        Client.out.flush();
+                        Client.out.writeObject(fileNameFound);
+                        Client.out.flush();
                         
                         break;
                     case '-'://
