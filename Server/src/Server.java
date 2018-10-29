@@ -56,6 +56,7 @@ public class Server extends Thread {
             }
 
             SocketHandler sh = null;
+            PublicKey clientKey = null;
             try {
                 clientSocket = serverSocket.accept();
 
@@ -74,7 +75,7 @@ public class Server extends Thread {
                 out.writeObject("");
                 out.flush();
 
-                PublicKey clientKey = (PublicKey) in.readObject();
+                clientKey = (PublicKey) in.readObject();
                 String username = (String) in.readObject();
                 System.out.println("Welcome: " + username + " to the chat");
 
@@ -96,11 +97,12 @@ public class Server extends Thread {
 //                outFromServer = clientSocket.getOutputStream();
 //                out = new ObjectOutputStream(outFromServer);
                 String userList = getListOfUsers();
-                out.writeObject("&" + userList);
+                String msg = "&" + userList;
+                out.writeObject(encrypt(clientKey, msg.getBytes()));
                 out.flush();
 
             } catch (Exception e) {
-                System.err.println("SERVER: " + e);
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
             }
 
         } catch (Exception ex) {
@@ -135,7 +137,9 @@ public class Server extends Thread {
 //                out = new ObjectOutputStream(outFromServer);
 
                 out = pair.getValue().getOut();
-                out.writeObject("&" + userList);
+                PublicKey clientKey = pair.getValue().getClientKey();
+                String msg = "&" + userList;
+                out.writeObject(encrypt(clientKey, msg.getBytes()));
                 out.flush();
 
             } catch (Exception e) {
@@ -154,9 +158,10 @@ public class Server extends Thread {
 //                outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
 //                out = new ObjectOutputStream(outFromServer);
                 out = pair.getValue().getOut();
-                out.writeObject(username);
+                PublicKey clientKey = pair.getValue().getClientKey();
+                out.writeObject(encrypt(clientKey, username.getBytes()));
                 out.flush();
-                out.writeObject(message);
+                out.writeObject(encrypt(clientKey, message.getBytes()));
                 out.flush();
             } catch (Exception e) {
                 System.err.println("problem in broadcast " + e);
@@ -174,11 +179,12 @@ public class Server extends Thread {
 //                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
 //                    out = new ObjectOutputStream(outFromServer);
                     out = pair.getValue().getOut();
-                    out.writeObject("~");
+                    PublicKey clientKey = pair.getValue().getClientKey();
+                    out.writeObject(encrypt(clientKey, "~".getBytes()));
                     out.flush();
-                    out.writeObject(searchString);
+                    out.writeObject(encrypt(clientKey, searchString.getBytes()));
                     out.flush();
-                    out.writeObject(username);
+                    out.writeObject(encrypt(clientKey, username.getBytes()));
                     out.flush();
                 }
             } catch (Exception e) {
@@ -197,9 +203,11 @@ public class Server extends Thread {
 //                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
 //                    out = new ObjectOutputStream(outFromServer);
                     out = pair.getValue().getOut();
-                    out.writeObject(usernameFrom + " > " + usernameTo);
+                    PublicKey clientKey = pair.getValue().getClientKey();
+                    String msg = usernameFrom + " > " + usernameTo;
+                    out.writeObject(encrypt(clientKey, msg.getBytes()));
                     out.flush();
-                    out.writeObject(message);
+                    out.writeObject(encrypt(clientKey, message.getBytes()));
                     out.flush();
                 } catch (Exception e) {
                     System.err.println("could not whisper : " + e);
@@ -220,9 +228,10 @@ public class Server extends Thread {
 //                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
 //                    out = new ObjectOutputStream(outFromServer);
                     out = pair.getValue().getOut();
-                    out.writeObject("$");
+                    PublicKey clientKey = pair.getValue().getClientKey();
+                    out.writeObject(encrypt(clientKey, "$".getBytes()));
                     out.flush();
-                    out.writeObject(fileList);
+                    out.writeObject(encrypt(clientKey, fileList.getBytes()));
                     out.flush();
 
                     System.out.println("2");
@@ -243,13 +252,14 @@ public class Server extends Thread {
 //                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
 //                    out = new ObjectOutputStream(outFromServer);
                     out = pair.getValue().getOut();
-                    out.writeObject("-");
+                    PublicKey clientKey = pair.getValue().getClientKey();
+                    out.writeObject(encrypt(clientKey, filename.getBytes("-")));
                     out.flush();
-                    out.writeObject(filename);
+                    out.writeObject(encrypt(clientKey, filename.getBytes()));
                     out.flush();
-                    out.writeObject(receiverIP);
+                    out.writeObject(encrypt(clientKey, receiverIP.getBytes()));
                     out.flush();
-                    out.writeObject(newPort + "");
+                    out.writeObject(encrypt(clientKey, (newPort + "").getBytes()));
                     out.flush();
                     portNumSender--;
                     System.out.println("REACHED :: " + portNumSender);
@@ -270,7 +280,8 @@ public class Server extends Thread {
 //                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
 //                    out = new ObjectOutputStream(outFromServer);
                     out = pair.getValue().getOut();
-                    out.writeObject(portNumReceiver + "");
+                    PublicKey clientKey = pair.getValue().getClientKey();
+                    out.writeObject(encrypt(clientKey, (portNumReceiver + "").getBytes("-")));
                     out.flush();
                     portNumReceiver--;
                 } catch (Exception e) {

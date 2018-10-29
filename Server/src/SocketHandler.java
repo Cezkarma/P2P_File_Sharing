@@ -1,6 +1,7 @@
 //package rw354_tut1_server;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -43,9 +44,9 @@ public class SocketHandler implements Runnable {
         System.out.println("new client thread created");
         while (true) {
             try {
-                String toUser = (String) in.readObject();
+                String toUser = new String(Server.decrypt((byte[]) in.readObject()));
                 System.out.println("toUser : " + toUser);
-                String message = (String) in.readObject();
+                String message = new String(Server.decrypt((byte[]) in.readObject()));
                 System.out.println("message : " + message);
                 if (toUser.equals(BROADCAST_MSG)) {
                     Server.broadcast(username, message);
@@ -79,9 +80,9 @@ public class SocketHandler implements Runnable {
                     //Server.portNum--;
                 } else if (toUser.equals(FOUND_FILES)) {
                     String userFrom = message;
-                    String userTo = (String) in.readObject();
+                    String userTo = new String(Server.decrypt((byte[]) in.readObject()));
 //                    userTo = new String(Server.decrypt(userTo.getBytes()));
-                    String fileNameRecv = (String) in.readObject();
+                    String fileNameRecv = new String(Server.decrypt((byte[]) in.readObject()));
 
                     if (Server.fileNames.get(userTo).containsKey(fileNameRecv)) {
                         fileNameRecv = "." + fileNameRecv;
@@ -92,8 +93,7 @@ public class SocketHandler implements Runnable {
 
                 } else if (toUser.equals(FILE_CHOSEN)) {
                     String fileSelected = message;
-                    String junk = (String) in.readObject();
-                    int tempPort = Integer.parseInt((String) in.readObject());
+                    int tempPort = Integer.parseInt(new String(Server.decrypt((byte[]) in.readObject())));
 
                     String userChosen = Server.fileNames.get(username).get(fileSelected);
 
@@ -106,6 +106,9 @@ public class SocketHandler implements Runnable {
                 } else {
                     Server.whisper(username, toUser, message);
                 }
+
+            } catch (EOFException e) {
+                System.out.println("Client " + username + "has disconnected");
             } catch (IOException ex) {
                 Logger.getLogger(SocketHandler.class.getName()).log(Level.SEVERE, null, ex);
                 //bc that user disconnected
@@ -132,6 +135,10 @@ public class SocketHandler implements Runnable {
         return out;
     }
 
+    public PublicKey getClientKey() {
+        return clientKey;
+    }
+
     public static String hashToString(ConcurrentHashMap<String, String> map) {
         String toSend = "";
         for (Map.Entry<String, String> pair : map.entrySet()) {
@@ -140,6 +147,10 @@ public class SocketHandler implements Runnable {
 
         System.out.println("TO SEND ::: " + toSend);
 
-        return toSend.substring(0, toSend.length() - 1);
+        if (toSend.length() > 0) {
+            return toSend.substring(0, toSend.length() - 1);
+        } else {
+            return "";
+        }
     }
 }
