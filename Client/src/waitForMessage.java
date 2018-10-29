@@ -74,7 +74,7 @@ public class waitForMessage extends Thread {
                     senderThread.start();
                     break;    
                 case '$'://
-                                        System.out.println("$$$$$$$$$$$$$$$$$$");
+                    System.out.println("$$$$$$$$$$$$$$$$$$");
                     
                     String fileNames = Client.receiveMsg();
                     Client.portNum = Integer.parseInt(Client.receiveMsg());

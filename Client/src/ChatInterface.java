@@ -124,7 +124,7 @@ public class ChatInterface extends javax.swing.JFrame {
             }
         });
 
-        IP_addr.setText("146.232.50.162");
+        IP_addr.setText("146.232.50.153");
         IP_addr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 IP_addrActionPerformed(evt);
@@ -147,7 +147,7 @@ public class ChatInterface extends javax.swing.JFrame {
 
         searchText.setColumns(20);
         searchText.setRows(5);
-        searchText.setText("tree1.jpeg");
+        searchText.setText("archer");
         jScrollPane1.setViewportView(searchText);
 
         searchButton.setText("SEARCH");
