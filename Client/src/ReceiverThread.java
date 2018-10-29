@@ -73,6 +73,11 @@ public class ReceiverThread extends Thread{
             
             System.out.println("DONE WITH FILE :: ");
             
+            inFromSender.close();
+            in.close();
+            clientSocket.close();
+            serverSocket.close();
+            
         } catch (Exception ex) {
             Logger.getLogger(ReceiverThread.class.getName()).log(Level.SEVERE, null, ex);
         }

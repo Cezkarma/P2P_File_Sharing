@@ -201,6 +201,7 @@ public class Server extends Thread {
                     out.writeUTF(receiverIP);
                     out.writeUTF(portNum+"");
                     portNum--;
+                    System.out.println("REACHED :: "+filename);
                 } catch (Exception e) {
                     System.err.println("could not whisper : " + e);
                 }

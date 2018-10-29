@@ -68,6 +68,7 @@ public class SocketHandler implements Runnable {
                     
                     
                     //Server.portNum--;
+                    Server.fileNames.get(username).clear();
                     
                     while (Server.fileNames.get(username).size() < Server.listOfUsers.size() - 1){}
                     
@@ -82,16 +83,17 @@ public class SocketHandler implements Runnable {
                     String fileNameRecv = in.readUTF();
                     
                     Server.fileNames.get(userTo).put(fileNameRecv, userFrom);
-                    
+                    System.out.println("filenamerecv : "+Server.fileNames.get(userTo));
                     
                 } else if (toUser.equals(FILE_CHOSEN)) {
                     String fileSelected = message;
                     String userChosen = Server.fileNames.get(username).get(fileSelected);
-                    //clientSocket.getRemoteSocketAddress().toString()
+
+                    System.out.println("file selected : "+fileSelected);
+                    System.out.println("user selected : "+userChosen);
                     
                     Server.sendToSender(fileSelected, userChosen , clientSocket.getRemoteSocketAddress().toString());
                     Server.fileNames.get(username).clear();
-                    
                     
                 } else {
                     Server.whisper(username, toUser, message);
