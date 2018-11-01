@@ -22,14 +22,49 @@ import javax.swing.JFileChooser;
  * @author 18214304
  */
 public class SenderThread extends Thread {
+
+    /**
+     *
+     */
     public String filename;
+
+    /**
+     *
+     */
     public String receiverIP;
+
+    /**
+     *
+     */
     public static OutputStream outToReceiver;
+
+    /**
+     *
+     */
     public static DataOutputStream out;
     Socket socket = null;
+
+    /**
+     *
+     */
     public static int blockSize = 100;
+
+    /**
+     *
+     */
     public static int numOfBlocks = 50;
+
+    /**
+     *
+     */
     public static int portNumber ;
+
+    /**
+     *
+     * @param filename
+     * @param receiverIP
+     * @param portNumber
+     */
     public SenderThread(String filename , String receiverIP, int portNumber) {
         this.filename = filename;
         this.receiverIP = receiverIP;   
@@ -69,10 +104,7 @@ public class SenderThread extends Thread {
                     out.flush();
                     tempCount -= blockSize;
                     Client.chat.progressTheUploadBar((int) 100 * i/50);
-//                    for(int j = 0 ; j < byteArray.length; j++){
-//                        System.out.print(byteArray[j] );
-//                    }
-//                    System.out.println("");
+
                 }
 
                 System.out.println("temp count : " + tempCount);

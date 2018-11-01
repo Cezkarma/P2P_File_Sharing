@@ -11,12 +11,20 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+/**
+ *
+ * @author 18214304
+ */
 public class waitForMessage extends Thread {
 
     private static char UPDATE_USERS_SIGNAL = '&';
 
     ChatInterface chat = null;
 
+    /**
+     *
+     * @param chat
+     */
     public waitForMessage(ChatInterface chat) {
         this.chat = chat;
 
@@ -42,6 +50,14 @@ public class waitForMessage extends Thread {
 
     //An infinite while loop the is looking for incoming messages
     //It checks the code of the message and based on that categorizes the follwoing message
+
+    /**
+     *
+     * @param chat
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws ClassNotFoundException
+     */
     public static void waitForMsg(ChatInterface chat) throws IOException, InterruptedException, ClassNotFoundException {
         String list_of_users = Client.receiveMsg();
         chat.addAllusers(list_of_users.substring(1, list_of_users.length()));
@@ -150,9 +166,15 @@ public class waitForMessage extends Thread {
         return filename;
     }
 
+    /**
+     *
+     * @param s1
+     * @param s2
+     * @return
+     */
     public static double similarity(String s1, String s2) {
         String longer = s1, shorter = s2;
-        if (s1.length() < s2.length()) { // longer should always have greater length
+        if (s1.length() < s2.length()) {
             longer = s2;
             shorter = s1;
         }
@@ -163,6 +185,12 @@ public class waitForMessage extends Thread {
         return (longerLength - editDistance(longer, shorter)) / (double) longerLength;
     }
 
+    /**
+     *
+     * @param s1
+     * @param s2
+     * @return
+     */
     public static int editDistance(String s1, String s2) {
         s1 = s1.toLowerCase();
         s2 = s2.toLowerCase();

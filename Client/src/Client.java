@@ -23,14 +23,41 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.swing.JOptionPane;
 
+/**
+ *
+ * @author 18214304
+ */
 public class Client {
 
+    /**
+     *
+     */
     public static PrivateKey myPrivateKey;
+
+    /**
+     *
+     */
     public static PublicKey myPublicKey;
+
+    /**
+     *
+     */
     public static boolean isPaused = false;
     private static String DISCONNECT_MSG = "@";
+
+    /**
+     *
+     */
     public static String fileName;
+
+    /**
+     *
+     */
     public static int portNum = 7999;
+
+    /**
+     *
+     */
     public boolean valid_connection = true;
     private final static int port = 8000;
     static String serverName = "146.232.50.162";
@@ -39,14 +66,28 @@ public class Client {
     static InputStream inFromServer;
     static ObjectInputStream in;
     static Socket client;
+
+    /**
+     *
+     */
     public static ChatInterface chat;
+
+    /**
+     *
+     */
     public static String IP_ad;
 //    public static ObjectOutputStream objectOut;
 //    public static ObjectInputStream objectIn;
+
+    /**
+     *
+     */
     public static PublicKey serverKey;
 
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
+     * @throws java.security.NoSuchAlgorithmException
      */
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
         // TODO code application logic here
@@ -63,6 +104,14 @@ public class Client {
     //Connects the client sockect to the server socket. 
     //Receivees the list of currently connected users and sends username.
     // It calls method waitForMessage which starts a thread and conctantly looks for incoming messages
+
+    /**
+     *
+     * @param serverName
+     * @param usr
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public static void connect(String serverName, String usr) throws IOException, ClassNotFoundException {
         boolean validIP = false;
         try {
@@ -75,15 +124,13 @@ public class Client {
                 return;
             }
             outToServer = client.getOutputStream();
-//            objectOut = new ObjectOutputStream(outToServer);
             out = new ObjectOutputStream(outToServer);
             
             inFromServer = client.getInputStream();
             in = new ObjectInputStream(inFromServer);
             serverKey = receiveObj();
 
-//            System.out.println("ServerKey  : " + serverKey.toString() );
-            String userList_intial = (String)in.readObject();//receiveMsg();
+            String userList_intial = (String)in.readObject();
             System.out.println("Received initial user list" + userList_intial);
             out.writeObject(myPublicKey);
             out.flush();
@@ -91,10 +138,6 @@ public class Client {
             if (!validUsrn) {
                 JOptionPane.showMessageDialog(chat, "Username taken , new username : " + chat.username);
             }
-//            outToServer = client.getOutputStream();
-////            objectOut = new ObjectOutputStream(outToServer);
-//            out = new ObjectOutputStream(outToServer);
-////            objectOut.writeObject(myPublicKey);
             System.out.println("myPublicKey  : " + myPublicKey.toString());
             out.writeObject(chat.username);
             out.flush();
@@ -108,14 +151,28 @@ public class Client {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public static String getIPaddr() {
         return IP_ad;
     }
 
+    /**
+     *
+     * @return
+     */
     public static String getServerName() {
         return serverName;
     }
 
+    /**
+     *
+     * @param msg
+     * @param usr
+     * @throws IOException
+     */
     public static void sendMessage(String msg, String usr) throws IOException {
         try {
             byte[] l = encrypt(serverKey, usr.getBytes());
@@ -138,6 +195,11 @@ public class Client {
     }
 
     // Disconnects the user : closes all dataStreams as well as the socket. It also notifies the Server beforehand
+
+    /**
+     *
+     * @param usr
+     */
     public static void disconnect(String usr) {
         try {
             if (ChatInterface.connected) {
@@ -169,6 +231,12 @@ public class Client {
         }
 
     }
+
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
     public static PublicKey receiveObj() throws IOException {
         PublicKey inputFromServer = null;
         try {
@@ -179,6 +247,12 @@ public class Client {
             return inputFromServer;
     }
 
+    /**
+     *
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public static String receiveMsg() throws IOException, ClassNotFoundException {
         byte[] temp = (byte[]) in.readObject();
         String inputFromServer = new String();
@@ -199,6 +273,13 @@ public class Client {
     }
 
     //Runs through list of usernames and check if the current username is already take , if so it assigns a new username
+
+    /**
+     *
+     * @param list
+     * @param usrnm
+     * @return
+     */
     public static boolean checkUsername(String list, String usrnm) {
         boolean valid = true;
         List<String> tempList = Arrays.asList(list.split(","));
@@ -211,18 +292,44 @@ public class Client {
         return valid;
     }
 
+    /**
+     *
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     public static KeyPair generateKeys() throws NoSuchAlgorithmException {
         KeyPairGenerator k = KeyPairGenerator.getInstance("RSA");
         k.initialize(2048);
         return k.genKeyPair();
     }
 
+    /**
+     *
+     * @param key
+     * @param toEncrypt
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeyException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     */
     public static byte[] encrypt(PublicKey key, byte[] toEncrypt) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher c = Cipher.getInstance("RSA");
         c.init(Cipher.ENCRYPT_MODE, key);
         return c.doFinal(toEncrypt);
     }
 
+    /**
+     *
+     * @param toDecrypt
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws InvalidKeyException
+     */
     public static byte[] decrypt(byte[] toDecrypt) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         Cipher c = Cipher.getInstance("RSA");
         c.init(Cipher.DECRYPT_MODE, myPrivateKey);

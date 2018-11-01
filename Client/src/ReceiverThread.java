@@ -9,6 +9,10 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ *
+ * @author 18214304
+ */
 public class ReceiverThread extends Thread{
     private int NUM_OF_BLOCKS = 50;
     
@@ -18,9 +22,21 @@ public class ReceiverThread extends Thread{
     private int blocksize;
     ServerSocket serverSocket = null;
     Socket clientSocket = null;
+
+    /**
+     *
+     */
     public static InputStream inFromSender;
+
+    /**
+     *
+     */
     public static DataInputStream in;
     
+    /**
+     *
+     * @param filename
+     */
     public ReceiverThread(String filename) {
         this.filename = filename;
     }
@@ -49,19 +65,14 @@ public class ReceiverThread extends Thread{
             int tempCount = filesize;
             
             for (int i = 0; i < NUM_OF_BLOCKS - 1; i++) {
-                //System.out.println("i ::: "+Client.isPaused);
                 
-                while(Client.isPaused){System.out.print("");}//System.out.println("j ::: "+Client.isPaused);}
+                while(Client.isPaused){System.out.print("");}
                 byte[] byteArray = new byte[blocksize];
                 in.readFully(byteArray, 0, byteArray.length);
                 bos.write(byteArray, 0, byteArray.length);
                 tempCount -= blocksize;
                 
                 Client.chat.progressTheDownloadBar((int) 100 * i/50);
-//                    for (int j = 0; j < byteArray.length; j++) {
-//                        System.out.print(byteArray[j]);
-//                    }
-//                    System.out.println("");
             }
             
             

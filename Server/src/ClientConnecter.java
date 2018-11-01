@@ -13,6 +13,10 @@ import java.security.PublicKey;
 //import static rw354_tut1_server.Server.inFromClient;
 //import static rw354_tut1_server.Server.outFromServer;
 
+/**
+ *
+ * @author 18214304
+ */
 public class ClientConnecter extends Thread {
     
     ServerSocket serverSocket = null;
@@ -24,6 +28,11 @@ public class ClientConnecter extends Thread {
     ObjectInputStream in;
     //ObjectInputStream objectIn;
     
+    /**
+     *
+     * @param serverSocket
+     * @param clientSocket
+     */
     public ClientConnecter (ServerSocket serverSocket, Socket clientSocket) {
         this.serverSocket = serverSocket;
         this.clientSocket = clientSocket;

@@ -13,8 +13,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ *
+ * @author 18214304
+ */
 public class SocketHandler implements Runnable {
 
+    /**
+     *
+     */
     public static boolean ContinueReceivingFilename = true;
     private String DISCONNECT_MSG = "@";
     private String BROADCAST_MSG = "All";
@@ -29,6 +36,14 @@ public class SocketHandler implements Runnable {
     ObjectInputStream in;
     ObjectOutputStream out;
 
+    /**
+     *
+     * @param clientKey
+     * @param username
+     * @param clientSocket
+     * @param out
+     * @param in
+     */
     public SocketHandler(PublicKey clientKey, String username, Socket clientSocket, ObjectOutputStream out, ObjectInputStream in) {
         this.clientKey = clientKey;
         this.username = username;
@@ -135,18 +150,35 @@ public class SocketHandler implements Runnable {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public Socket getClientSocket() {
         return clientSocket;
     }
 
+    /**
+     *
+     * @return
+     */
     public ObjectOutputStream getOut() {
         return out;
     }
 
+    /**
+     *
+     * @return
+     */
     public PublicKey getClientKey() {
         return clientKey;
     }
 
+    /**
+     *
+     * @param map
+     * @return
+     */
     public static String hashToString(ConcurrentHashMap<String, String> map) {
         String toSend = "";
         for (Map.Entry<String, String> pair : map.entrySet()) {

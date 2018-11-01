@@ -19,6 +19,12 @@ public class ReceiveFileNameThread extends Thread {
     String fileName;
     DataInputStream in;
 
+    /**
+     *
+     * @param username
+     * @param fileName
+     * @param in
+     */
     public ReceiveFileNameThread(String username, String fileName, DataInputStream in) {
         this.username = username;
         this.fileName = fileName;

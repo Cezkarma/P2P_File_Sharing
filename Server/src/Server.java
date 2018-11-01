@@ -22,23 +22,70 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+/**
+ *
+ * @author 18214304
+ */
 public class Server extends Thread {
 
+    /**
+     *
+     */
     public static PrivateKey myPrivateKey;
+
+    /**
+     *
+     */
     public static PublicKey myPublicKey;
+
+    /**
+     *
+     */
     public static int portNumSender = 7998;
+
+    /**
+     *
+     */
     public static int portNumReceiver = 7998;
+
+    /**
+     *
+     */
     public static OutputStream outFromServer;
+
+    /**
+     *
+     */
     public static ObjectOutputStream out;
     //public static ObjectOutputStream objectOut;
+
+    /**
+     *
+     */
     public static InputStream inFromClient;
+
+    /**
+     *
+     */
     public static ObjectInputStream in;
     //public static ObjectInputStream objectIn;
     private static InputStream terminalIn = null;
     private static BufferedReader br = null;
+
+    /**
+     *
+     */
     public static ConcurrentHashMap<String, SocketHandler> listOfUsers = new ConcurrentHashMap<>();
+
+    /**
+     *
+     */
     public static ConcurrentHashMap<String, ConcurrentHashMap<String, String>> fileNames = new ConcurrentHashMap<>();
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         try {
             int portNumber = 8000;
@@ -111,6 +158,10 @@ public class Server extends Thread {
 
     }
 
+    /**
+     *
+     * @return
+     */
     public static String getListOfUsers() {
         String userList = "";
 
@@ -127,6 +178,10 @@ public class Server extends Thread {
         return userList;
     }
 
+    /**
+     *
+     * @param userList
+     */
     public static void sendUserList(String userList) {
         // OutputStream outFromServer = null;
         ObjectOutputStream out = null;
@@ -149,6 +204,11 @@ public class Server extends Thread {
 
     }
 
+    /**
+     *
+     * @param username
+     * @param message
+     */
     public static void broadcast(String username, String message) {
 //        OutputStream outFromServer = null;
         ObjectOutputStream out = null;
@@ -169,6 +229,11 @@ public class Server extends Thread {
         }
     }
 
+    /**
+     *
+     * @param username
+     * @param searchString
+     */
     public static void bcFileRequest(String username, String searchString) {
 //        OutputStream outFromServer = null;
         ObjectOutputStream out = null;
@@ -193,6 +258,12 @@ public class Server extends Thread {
         }
     }
 
+    /**
+     *
+     * @param usernameFrom
+     * @param usernameTo
+     * @param message
+     */
     public static void whisper(String usernameFrom, String usernameTo, String message) {
 //        OutputStream outFromServer = null;
         ObjectOutputStream out = null;
@@ -216,6 +287,11 @@ public class Server extends Thread {
         }
     }
 
+    /**
+     *
+     * @param usernameTo
+     * @param fileList
+     */
     public static void sendFileList(String usernameTo, String fileList) {
         //OutputStream outFromServer = null;
         ObjectOutputStream out = null;
@@ -242,6 +318,13 @@ public class Server extends Thread {
         }
     }
 
+    /**
+     *
+     * @param filename
+     * @param sender
+     * @param receiverIP
+     * @param newPort
+     */
     public static void sendToSender(String filename, String sender, String receiverIP, int newPort) {
 //        OutputStream outFromServer = null;
         ObjectOutputStream out = null;
@@ -270,6 +353,10 @@ public class Server extends Thread {
         }
     }
 
+    /**
+     *
+     * @param usernameTo
+     */
     public static void sendPortNumber(String usernameTo) {
 //        OutputStream outFromServer = null;
         ObjectOutputStream out = null;
@@ -291,18 +378,44 @@ public class Server extends Thread {
         }
     }
 
+    /**
+     *
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     public static KeyPair generateKeys() throws NoSuchAlgorithmException {
         KeyPairGenerator k = KeyPairGenerator.getInstance("RSA");
         k.initialize(2048);
         return k.genKeyPair();
     }
 
+    /**
+     *
+     * @param key
+     * @param toEncrypt
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeyException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     */
     public static byte[] encrypt(PublicKey key, byte[] toEncrypt) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         Cipher c = Cipher.getInstance("RSA");
         c.init(Cipher.ENCRYPT_MODE, key);
         return c.doFinal(toEncrypt);
     }
 
+    /**
+     *
+     * @param toDecrypt
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws IllegalBlockSizeException
+     * @throws BadPaddingException
+     * @throws InvalidKeyException
+     */
     public static byte[] decrypt(byte[] toDecrypt) throws NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         Cipher c = Cipher.getInstance("RSA");
         c.init(Cipher.DECRYPT_MODE, myPrivateKey);
