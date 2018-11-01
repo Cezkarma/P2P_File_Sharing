@@ -1,4 +1,3 @@
-//package rw354_tut1_server;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -14,13 +13,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author 18214304
+ * The socket handler that handles messages to and from clients
+ * 
+ * @author 18214304 & 20059884
  */
 public class SocketHandler implements Runnable {
 
     /**
-     *
+     * determines whether or not to keep receiving filename
      */
     public static boolean ContinueReceivingFilename = true;
     private String DISCONNECT_MSG = "@";
@@ -29,7 +29,6 @@ public class SocketHandler implements Runnable {
     private String FOUND_FILES = "$";
     private String FILE_CHOSEN = "*";
     private String WHO_DISCONNECTED_SGNL = "#";
-
     private String username;
     private Socket clientSocket;
     private PublicKey clientKey;
@@ -37,12 +36,12 @@ public class SocketHandler implements Runnable {
     ObjectOutputStream out;
 
     /**
-     *
-     * @param clientKey
-     * @param username
-     * @param clientSocket
-     * @param out
-     * @param in
+     * constructor for sockethandler
+     * @param clientKey the client key
+     * @param username the username
+     * @param clientSocket the client socket
+     * @param out the output stream
+     * @param in the input stream
      */
     public SocketHandler(PublicKey clientKey, String username, Socket clientSocket, ObjectOutputStream out, ObjectInputStream in) {
         this.clientKey = clientKey;
@@ -57,12 +56,14 @@ public class SocketHandler implements Runnable {
     @Override
     public void run() {
         System.out.println("new client thread created");
+
         while (true) {
             try {
                 String toUser = new String(Server.decrypt((byte[]) in.readObject()));
                 System.out.println("toUser : " + toUser);
                 String message = new String(Server.decrypt((byte[]) in.readObject()));
                 System.out.println("message : " + message);
+
                 if (toUser.equals(BROADCAST_MSG)) {
                     Server.broadcast(username, message);
                 } else if (toUser.equals(DISCONNECT_MSG)) {
@@ -75,28 +76,17 @@ public class SocketHandler implements Runnable {
                         System.out.println("No more users connected");
                     }
                 } else if (toUser.equals(SEARCH_MSG)) {
-                    //send port nr to receiver
-
                     Server.bcFileRequest(username, message);
-
-                    //Server.portNum--;
                     Server.fileNames.get(username).clear();
 
                     while (Server.fileNames.get(username).size() < Server.listOfUsers.size() - 1) {
                     }
-                    //System.out.println(Server.fileNames.get(username).size());System.out.println(Server.listOfUsers.size());
-
-                    System.out.println("jjj");
 
                     String fileNamesToSend = hashToString(Server.fileNames.get(username));
                     Server.sendFileList(username, fileNamesToSend);
-                    //Server.sendPortNumber(username);
-
-                    //Server.portNum--;
                 } else if (toUser.equals(FOUND_FILES)) {
                     String userFrom = message;
                     String userTo = new String(Server.decrypt((byte[]) in.readObject()));
-//                    userTo = new String(Server.decrypt(userTo.getBytes()));
                     String fileNameRecv = new String(Server.decrypt((byte[]) in.readObject()));
 
                     if (Server.fileNames.get(userTo).containsKey(fileNameRecv)) {
@@ -105,25 +95,16 @@ public class SocketHandler implements Runnable {
 
                     Server.fileNames.get(userTo).put(fileNameRecv, userFrom);
                     System.out.println("filenamerecv : " + Server.fileNames.get(userTo) + "     " + userTo + "   " + userFrom + "  " + Server.fileNames.get(userTo).size());
-
                 } else if (toUser.equals(FILE_CHOSEN)) {
                     String fileSelected = message;
                     int tempPort1 = Integer.parseInt(new String(Server.decrypt((byte[]) in.readObject())));
                     int tempPort = Integer.parseInt(new String(Server.decrypt((byte[]) in.readObject())));
-
                     String userChosen = Server.fileNames.get(username).get(fileSelected);
-
-                    System.out.println("file selected : " + fileSelected);
-                    System.out.println("user selected : " + userChosen);
-                    System.out.println("port : " + tempPort);
-
                     Server.sendToSender(fileSelected, userChosen, clientSocket.getRemoteSocketAddress().toString(), tempPort);
                     Server.fileNames.get(username).clear();
-
                 } else {
                     Server.whisper(username, toUser, message);
                 }
-
             } catch (EOFException e) {
                 try {
                     System.out.println("Client " + username + " has disconnected");
@@ -134,7 +115,7 @@ public class SocketHandler implements Runnable {
                 }
             } catch (IOException ex) {
                 Logger.getLogger(SocketHandler.class.getName()).log(Level.SEVERE, null, ex);
-                //bc that user disconnected
+                
                 try {
                     clientSocket.close();
                 } catch (Exception e) {
@@ -147,45 +128,47 @@ public class SocketHandler implements Runnable {
                 Logger.getLogger(SocketHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
     }
 
     /**
-     *
-     * @return
+     * gets the client socket
+     * 
+     * @return the client socket
      */
     public Socket getClientSocket() {
         return clientSocket;
     }
 
     /**
-     *
-     * @return
+     * gets output stream
+     * 
+     * @return the output stream
      */
     public ObjectOutputStream getOut() {
         return out;
     }
 
     /**
-     *
-     * @return
+     * gets the client key
+     * 
+     * @return the client key
      */
     public PublicKey getClientKey() {
         return clientKey;
     }
 
     /**
-     *
-     * @param map
-     * @return
+     * converts hashmap entries to a string
+     * 
+     * @param map the hashmap
+     * @return hashmap entries in string form
      */
     public static String hashToString(ConcurrentHashMap<String, String> map) {
         String toSend = "";
+
         for (Map.Entry<String, String> pair : map.entrySet()) {
             toSend = toSend + pair.getKey() + ",";
         }
-
-        System.out.println("TO SEND ::: " + toSend);
 
         if (toSend.length() > 0) {
             return toSend.substring(0, toSend.length() - 1);

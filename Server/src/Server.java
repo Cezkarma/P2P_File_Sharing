@@ -1,4 +1,3 @@
-//package rw354_tut1_server;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -23,68 +22,68 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 /**
- *
- * @author 18214304
+ * Acts as the main class for the server
+ * 
+ * @author 18214304 & 20059884
  */
 public class Server extends Thread {
 
     /**
-     *
+     * this private key
      */
     public static PrivateKey myPrivateKey;
 
     /**
-     *
+     * this public key
      */
     public static PublicKey myPublicKey;
 
     /**
-     *
+     * port number for sender
      */
     public static int portNumSender = 7998;
 
     /**
-     *
+     * port number for receiver
      */
     public static int portNumReceiver = 7998;
 
     /**
-     *
+     * output stream
      */
     public static OutputStream outFromServer;
 
     /**
-     *
+     * object output stream
      */
     public static ObjectOutputStream out;
-    //public static ObjectOutputStream objectOut;
 
     /**
-     *
+     * input stream
      */
     public static InputStream inFromClient;
 
     /**
-     *
+     * object input stream
      */
     public static ObjectInputStream in;
-    //public static ObjectInputStream objectIn;
     private static InputStream terminalIn = null;
     private static BufferedReader br = null;
 
     /**
-     *
+     * map of users
      */
     public static ConcurrentHashMap<String, SocketHandler> listOfUsers = new ConcurrentHashMap<>();
 
     /**
-     *
+     * file names map
      */
     public static ConcurrentHashMap<String, ConcurrentHashMap<String, String>> fileNames = new ConcurrentHashMap<>();
 
     /**
-     *
-     * @param args
+     * main method
+     * 
+     * @param args the arguments
      */
     public static void main(String[] args) {
         try {
@@ -104,6 +103,7 @@ public class Server extends Thread {
 
             SocketHandler sh = null;
             PublicKey clientKey = null;
+            
             try {
                 clientSocket = serverSocket.accept();
 
@@ -112,10 +112,6 @@ public class Server extends Thread {
                 out.flush();
                 inFromClient = clientSocket.getInputStream();
                 in = new ObjectInputStream(inFromClient);
-                //objectIn = new ObjectInputStream(inFromClient);
-                //objectOut = new ObjectOutputStream(outFromServer);
-
-                System.out.println("SRVR PKEY - " + myPublicKey.toString());
 
                 out.writeObject(myPublicKey);
                 out.flush();
@@ -140,14 +136,10 @@ public class Server extends Thread {
             connector.start();
 
             try {
-
-//                outFromServer = clientSocket.getOutputStream();
-//                out = new ObjectOutputStream(outFromServer);
                 String userList = getListOfUsers();
                 String msg = "&" + userList;
                 out.writeObject(encrypt(clientKey, msg.getBytes()));
                 out.flush();
-
             } catch (Exception e) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
             }
@@ -159,8 +151,9 @@ public class Server extends Thread {
     }
 
     /**
-     *
-     * @return
+     * gets the list of users
+     * 
+     * @return the list of users
      */
     public static String getListOfUsers() {
         String userList = "";
@@ -179,44 +172,37 @@ public class Server extends Thread {
     }
 
     /**
-     *
-     * @param userList
+     * sends the user list
+     * 
+     * @param userList the user list
      */
     public static void sendUserList(String userList) {
-        // OutputStream outFromServer = null;
         ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             try {
-//                outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-//                out = new ObjectOutputStream(outFromServer);
-
                 out = pair.getValue().getOut();
                 PublicKey clientKey = pair.getValue().getClientKey();
                 String msg = "&" + userList;
                 out.writeObject(encrypt(clientKey, msg.getBytes()));
                 out.flush();
-
             } catch (Exception e) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
             }
         }
-
     }
 
     /**
-     *
-     * @param username
-     * @param message
+     * broadcasts a message
+     * 
+     * @param username username of sender
+     * @param message the message to be broadcast
      */
     public static void broadcast(String username, String message) {
-//        OutputStream outFromServer = null;
         ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             try {
-//                outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-//                out = new ObjectOutputStream(outFromServer);
                 out = pair.getValue().getOut();
                 PublicKey clientKey = pair.getValue().getClientKey();
                 out.writeObject(encrypt(clientKey, username.getBytes()));
@@ -230,19 +216,17 @@ public class Server extends Thread {
     }
 
     /**
-     *
-     * @param username
-     * @param searchString
+     * broadcasts a file request
+     * 
+     * @param username username of requester
+     * @param searchString file name searched
      */
     public static void bcFileRequest(String username, String searchString) {
-//        OutputStream outFromServer = null;
         ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             try {
                 if (!pair.getKey().equals(username)) {
-//                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-//                    out = new ObjectOutputStream(outFromServer);
                     out = pair.getValue().getOut();
                     PublicKey clientKey = pair.getValue().getClientKey();
                     out.writeObject(encrypt(clientKey, "~".getBytes()));
@@ -259,20 +243,18 @@ public class Server extends Thread {
     }
 
     /**
-     *
-     * @param usernameFrom
-     * @param usernameTo
-     * @param message
+     * whispers a message to a user
+     * 
+     * @param usernameFrom username of sender
+     * @param usernameTo username of receiver
+     * @param message the message whispered
      */
     public static void whisper(String usernameFrom, String usernameTo, String message) {
-//        OutputStream outFromServer = null;
         ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             if (pair.getKey().equals(usernameTo) || pair.getKey().equals(usernameFrom)) {
                 try {
-//                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-//                    out = new ObjectOutputStream(outFromServer);
                     out = pair.getValue().getOut();
                     PublicKey clientKey = pair.getValue().getClientKey();
                     String msg = usernameFrom + " > " + usernameTo;
@@ -288,29 +270,23 @@ public class Server extends Thread {
     }
 
     /**
-     *
-     * @param usernameTo
-     * @param fileList
+     * sends the file list
+     * 
+     * @param usernameTo username of requester
+     * @param fileList the file list
      */
     public static void sendFileList(String usernameTo, String fileList) {
-        //OutputStream outFromServer = null;
         ObjectOutputStream out = null;
-
-        System.out.println("1");
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             if (pair.getKey().equals(usernameTo)) {
                 try {
-//                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-//                    out = new ObjectOutputStream(outFromServer);
                     out = pair.getValue().getOut();
                     PublicKey clientKey = pair.getValue().getClientKey();
                     out.writeObject(encrypt(clientKey, "$".getBytes()));
                     out.flush();
                     out.writeObject(encrypt(clientKey, fileList.getBytes()));
                     out.flush();
-
-                    System.out.println("2");
                 } catch (Exception e) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
                 }
@@ -319,21 +295,19 @@ public class Server extends Thread {
     }
 
     /**
-     *
-     * @param filename
-     * @param sender
-     * @param receiverIP
-     * @param newPort
+     * sends message to chosen sender
+     * 
+     * @param filename requested filename
+     * @param sender the sender
+     * @param receiverIP receiver's ip address
+     * @param newPort the new port to be listened on
      */
     public static void sendToSender(String filename, String sender, String receiverIP, int newPort) {
-//        OutputStream outFromServer = null;
         ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             if (pair.getKey().equals(sender)) {
                 try {
-//                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-//                    out = new ObjectOutputStream(outFromServer);
                     out = pair.getValue().getOut();
                     PublicKey clientKey = pair.getValue().getClientKey();
                     out.writeObject(encrypt(clientKey, "-".getBytes()));
@@ -345,7 +319,6 @@ public class Server extends Thread {
                     out.writeObject(encrypt(clientKey, (newPort + "").getBytes()));
                     out.flush();
                     portNumSender--;
-                    System.out.println("REACHED :: " + portNumSender);
                 } catch (Exception e) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, e);
                 }
@@ -354,18 +327,16 @@ public class Server extends Thread {
     }
 
     /**
-     *
-     * @param usernameTo
+     * sends the port number
+     * 
+     * @param usernameTo the username of the receiver
      */
     public static void sendPortNumber(String usernameTo) {
-//        OutputStream outFromServer = null;
         ObjectOutputStream out = null;
 
         for (Map.Entry<String, SocketHandler> pair : listOfUsers.entrySet()) {
             if (pair.getKey().equals(usernameTo)) {
                 try {
-//                    outFromServer = pair.getValue().getClientSocket().getOutputStream();//.getClientSocket().getOutputStream();
-//                    out = new ObjectOutputStream(outFromServer);
                     out = pair.getValue().getOut();
                     PublicKey clientKey = pair.getValue().getClientKey();
                     out.writeObject(encrypt(clientKey, (portNumReceiver + "").getBytes("-")));
@@ -379,8 +350,9 @@ public class Server extends Thread {
     }
 
     /**
-     *
-     * @return
+     * generate a keypair
+     * 
+     * @return a keypair
      * @throws NoSuchAlgorithmException
      */
     public static KeyPair generateKeys() throws NoSuchAlgorithmException {
@@ -390,10 +362,11 @@ public class Server extends Thread {
     }
 
     /**
-     *
-     * @param key
-     * @param toEncrypt
-     * @return
+     * encrypts a message
+     * 
+     * @param key key for encryption
+     * @param toEncrypt message to be encrypted
+     * @return the encrypted message
      * @throws NoSuchAlgorithmException
      * @throws NoSuchPaddingException
      * @throws InvalidKeyException
@@ -407,9 +380,10 @@ public class Server extends Thread {
     }
 
     /**
-     *
-     * @param toDecrypt
-     * @return
+     * decrypts a message
+     * 
+     * @param toDecrypt the message to be decrypted
+     * @return the decrypted message
      * @throws NoSuchAlgorithmException
      * @throws NoSuchPaddingException
      * @throws IllegalBlockSizeException
