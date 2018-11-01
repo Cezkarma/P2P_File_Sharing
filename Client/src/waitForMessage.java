@@ -126,6 +126,7 @@ public class waitForMessage extends Thread {
                                         chat.filechooseDropDown.addItem(s);
                                     }
                                 }
+                                chat.downloadBtn.setEnabled(true);
                         }
                         if(isPlusses||fileNames.length()==0){
                             JOptionPane.showMessageDialog(chat, "No file found");

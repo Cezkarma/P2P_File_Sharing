@@ -124,7 +124,7 @@ public class ChatInterface extends javax.swing.JFrame {
             }
         });
 
-        IP_addr.setText("146.232.50.153");
+        IP_addr.setText("146.232.49.193");
         IP_addr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 IP_addrActionPerformed(evt);
@@ -162,6 +162,7 @@ public class ChatInterface extends javax.swing.JFrame {
         jLabel5.setText("Upload Progress:");
 
         downloadPauseBtn.setText("Pause");
+        downloadPauseBtn.setEnabled(false);
         downloadPauseBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downloadPauseBtnActionPerformed(evt);
@@ -169,6 +170,7 @@ public class ChatInterface extends javax.swing.JFrame {
         });
 
         downloadBtn.setText("DOWNLOAD");
+        downloadBtn.setEnabled(false);
         downloadBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 downloadBtnActionPerformed(evt);
@@ -392,8 +394,8 @@ public class ChatInterface extends javax.swing.JFrame {
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
         String search = searchText.getText();
-        System.out.println("search in GUI   : " + search );
         try {
+
             Client.sendMessage(search, "~");
         } catch (IOException ex) {
             Logger.getLogger(ChatInterface.class.getName()).log(Level.SEVERE, null, ex);
@@ -403,6 +405,7 @@ public class ChatInterface extends javax.swing.JFrame {
     private void downloadBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadBtnActionPerformed
         try {
             // TODO add your handling code here:
+            downloadPauseBtn.setEnabled(true);
             String fileSelected = filechooseDropDown.getSelectedItem();
             Client.sendMessage(fileSelected, "*");
             Client.portNum--;
@@ -421,8 +424,11 @@ public class ChatInterface extends javax.swing.JFrame {
         Client.isPaused = !Client.isPaused;
         if(Client.isPaused){
             downloadPauseBtn.setBackground(Color.gray);
+            downloadPauseBtn.setText("Play");
         } else {
             downloadPauseBtn.setBackground(Color.white);
+            downloadPauseBtn.setText("Pause");
+
         }
         
     }//GEN-LAST:event_downloadPauseBtnActionPerformed
@@ -577,7 +583,7 @@ public class ChatInterface extends javax.swing.JFrame {
     private java.awt.Choice chat_choice_dropdown;
     private javax.swing.JButton connect_btn;
     private javax.swing.JButton disconnect_btn;
-    private javax.swing.JButton downloadBtn;
+    protected static javax.swing.JButton downloadBtn;
     public static javax.swing.JButton downloadPauseBtn;
     public static javax.swing.JProgressBar downloadProgBar;
     public static java.awt.Choice filechooseDropDown;
