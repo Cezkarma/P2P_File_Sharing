@@ -11,10 +11,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-/**
- *
- * @author 18214304
- */
 public class waitForMessage extends Thread {
 
     private static char UPDATE_USERS_SIGNAL = '&';
@@ -22,8 +18,9 @@ public class waitForMessage extends Thread {
     ChatInterface chat = null;
 
     /**
+     * The constructor
      *
-     * @param chat
+     * @param chat the GUI
      */
     public waitForMessage(ChatInterface chat) {
         this.chat = chat;
@@ -48,12 +45,11 @@ public class waitForMessage extends Thread {
 
     }
 
-    //An infinite while loop the is looking for incoming messages
-    //It checks the code of the message and based on that categorizes the follwoing message
-
     /**
+     * An infinite while loop the is looking for incoming messages It checks the
+     * code of the message and based on that categorizes the follwoing message
      *
-     * @param chat
+     * @param chat the GUI
      * @throws IOException
      * @throws InterruptedException
      * @throws ClassNotFoundException
@@ -61,7 +57,7 @@ public class waitForMessage extends Thread {
     public static void waitForMsg(ChatInterface chat) throws IOException, InterruptedException, ClassNotFoundException {
         String list_of_users = Client.receiveMsg();
         chat.addAllusers(list_of_users.substring(1, list_of_users.length()));
-        
+
         while (true) {
             try {
                 String anything = Client.receiveMsg();
@@ -70,23 +66,19 @@ public class waitForMessage extends Thread {
                         String connectedUsr = anything.substring(1, anything.length());
                         chat.addAllusers(connectedUsr);
                         break;
-                    case '#'://
+                    case '#':// Disconnected user
                         String disconnectedUsr = Client.receiveMsg();
                         String list_of = Client.receiveMsg().substring(1);
                         chat.removeUsers(disconnectedUsr, list_of);
                         break;
-                    case '~'://
-                        System.out.println("~~~~~~~~~~~~~~~~");
+                    case '~':// Search for file
                         String search = Client.receiveMsg();
                         String userFrom = Client.receiveMsg();
                         String fileNameFound = lookForFile(search);
-                        System.out.println("Search : " + search );
                         System.out.println("Chosen File : " + fileNameFound);
                         byte[] l = Client.encrypt(Client.serverKey, "$".getBytes());
                         Client.out.writeObject(l);
                         Client.out.flush();
-                        //Client.out.writeObject(chat.username);
-                        //Client.out.flush();
                         byte[] e = Client.encrypt(Client.serverKey, chat.username.getBytes());
                         Client.out.writeObject(e);
                         Client.out.flush();
@@ -96,42 +88,40 @@ public class waitForMessage extends Thread {
                         byte[] g = Client.encrypt(Client.serverKey, fileNameFound.getBytes());
                         Client.out.writeObject(g);
                         Client.out.flush();
-                        
                         break;
-                    case '-'://
-                        System.out.println("---------------");
-                        
+                    case '-':// Chosen my File to send
+
                         String filename = Client.receiveMsg();
                         String receiverIP = Client.receiveMsg();
                         int tempPort = Integer.parseInt(Client.receiveMsg());
                         Client.portNum = tempPort;
                         receiverIP = receiverIP.substring(1, receiverIP.indexOf(':'));
-                        System.out.println("portNumber : "+ Client.portNum+ " Filename : " + filename + "   and   receiverIP :  "+ receiverIP);
-                        SenderThread senderThread = new SenderThread(filename , receiverIP,tempPort);
+                        System.out.println("portNumber : " + Client.portNum + " Filename : " + filename + "   and   receiverIP :  " + receiverIP);
+                        SenderThread senderThread = new SenderThread(filename, receiverIP, tempPort);
                         senderThread.start();
                         break;
-                    case '$'://
-                        System.out.println("$$$$$$$$$$$$$$$$$$");
-                        
+                    case '$':// Received filenames from other users
                         String fileNames = Client.receiveMsg();
-                        //Client.portNum = Integer.parseInt(Client.receiveMsg());
-                        
                         boolean isPlusses = true;
-                        if(fileNames.length() != 0 ){
+
+                        if (fileNames.length() != 0) {
                             String[] fileNameList = fileNames.split(",");
                             chat.filechooseDropDown.removeAll();
-                                for (String s : fileNameList) {
-                                    if((!s.equals("+"))&&(s.charAt(0) != '.')){
-                                        isPlusses = false;
-                                        chat.filechooseDropDown.addItem(s);
-                                    }
+
+                            for (String s : fileNameList) {
+                                if ((!s.equals("+")) && (s.charAt(0) != '.')) {
+                                    isPlusses = false;
+                                    chat.filechooseDropDown.addItem(s);
                                 }
-                                chat.downloadBtn.setEnabled(true);
+                            }
+
+                            chat.downloadBtn.setEnabled(true);
                         }
-                        if(isPlusses||fileNames.length()==0){
+
+                        if (isPlusses || fileNames.length() == 0) {
                             JOptionPane.showMessageDialog(chat, "No file found");
                         }
-                        //convert and display
+
                         break;
                     default:
                         String who = anything;
@@ -152,51 +142,60 @@ public class waitForMessage extends Thread {
         double highScore = 0.3;
         File[] files = path.listFiles();
         for (int i = 0; i < files.length; i++) {
-
             if (files[i].isFile()) {
                 double score = similarity(files[i].getName(), search);
+
                 if (score > highScore) {
                     filename = files[i].getName();
                     highScore = score;
                 }
             }
         }
+
         if (filename.equals("")) {
             filename = "+";
         }
+
         return filename;
     }
 
     /**
+     * Compares the first and second string
      *
-     * @param s1
-     * @param s2
-     * @return
+     * @param s1 the first string
+     * @param s2 the second string
+     * @return the similarity factor
      */
     public static double similarity(String s1, String s2) {
         String longer = s1, shorter = s2;
+
         if (s1.length() < s2.length()) {
             longer = s2;
             shorter = s1;
         }
+
         int longerLength = longer.length();
+
         if (longerLength == 0) {
             return 1.0;
-            /* both strings are zero length */ }
+        }
         return (longerLength - editDistance(longer, shorter)) / (double) longerLength;
     }
 
     /**
+     * Calculates the distance between strings based on the amount of simimlar
+     * letters and their positions.
      *
-     * @param s1
-     * @param s2
-     * @return
+     * @param s1 the first string
+     * @param s2 the second string
+     * @return the distance between the strings.
      */
     public static int editDistance(String s1, String s2) {
         s1 = s1.toLowerCase();
         s2 = s2.toLowerCase();
 
         int[] costs = new int[s2.length() + 1];
+
         for (int i = 0; i <= s1.length(); i++) {
             int lastValue = i;
             for (int j = 0; j <= s2.length(); j++) {
@@ -204,17 +203,21 @@ public class waitForMessage extends Thread {
                     costs[j] = j;
                 } else if (j > 0) {
                     int newValue = costs[j - 1];
+
                     if (s1.charAt(i - 1) != s2.charAt(j - 1)) {
                         newValue = Math.min(Math.min(newValue, lastValue),
                                 costs[j]) + 1;
                     }
+
                     costs[j - 1] = lastValue;
                     lastValue = newValue;
                 }
             }
+
             if (i > 0) {
                 costs[s2.length()] = lastValue;
             }
+
         }
         return costs[s2.length()];
     }

@@ -16,7 +16,6 @@ import javax.swing.JFileChooser;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author 18214304
@@ -24,77 +23,77 @@ import javax.swing.JFileChooser;
 public class SenderThread extends Thread {
 
     /**
-     *
+     * The filename to be sent
      */
     public String filename;
 
     /**
-     *
+     * The IP addr of the receiver
      */
     public String receiverIP;
 
     /**
-     *
+     * The outputs stream to the receiver
      */
     public static OutputStream outToReceiver;
 
     /**
-     *
+     * The data stream that is attached to outToReceiver
      */
     public static DataOutputStream out;
     Socket socket = null;
 
     /**
-     *
+     * The size of the messages we send in bytes
      */
     public static int blockSize = 100;
 
     /**
-     *
+     * The amount of messages we send per file
      */
     public static int numOfBlocks = 50;
 
     /**
-     *
+     * the port number we use
      */
-    public static int portNumber ;
+    public static int portNumber;
 
     /**
+     * The constructor of this class
      *
-     * @param filename
-     * @param receiverIP
-     * @param portNumber
+     * @param filename The filename to be sent
+     * @param receiverIP The receivers IP
+     * @param portNumber The port number used
      */
-    public SenderThread(String filename , String receiverIP, int portNumber) {
+    public SenderThread(String filename, String receiverIP, int portNumber) {
         this.filename = filename;
-        this.receiverIP = receiverIP;   
+        this.receiverIP = receiverIP;
         this.portNumber = portNumber;
     }
-    
+
     @Override
     public void run() {
         try {
             Thread.sleep(500);
-            System.out.println("port number :  "  + portNumber);
-            socket = new Socket(receiverIP , portNumber );
+            System.out.println("port number :  " + portNumber);
+            socket = new Socket(receiverIP, portNumber);
             outToReceiver = socket.getOutputStream();
             out = new DataOutputStream(outToReceiver);
             String cwd = System.getProperty("user.dir");
-            File file = new File(cwd+"/"+filename);
+            File file = new File(cwd + "/" + filename);
             RandomAccessFile raf = new RandomAccessFile(file, "r");
-            byte[] b = new byte[(int)raf.length()];
+            byte[] b = new byte[(int) raf.length()];
             //raf.readFully(b);
-            blockSize = b.length/numOfBlocks;
-            
+            blockSize = b.length / numOfBlocks;
+
             out.writeInt(b.length);
-            System.out.println("b.length " + b.length );
-            System.out.println("blocksize " + blockSize );
+            System.out.println("b.length " + b.length);
+            System.out.println("blocksize " + blockSize);
 
             out.writeInt(blockSize);
-            
-            
+
             int tempCount = b.length;
-            
+
             try {
                 for (int i = 0; i < numOfBlocks - 1; i++) {
                     System.out.print(i);
@@ -103,7 +102,7 @@ public class SenderThread extends Thread {
                     out.write(byteArray, 0, byteArray.length);
                     out.flush();
                     tempCount -= blockSize;
-                    Client.chat.progressTheUploadBar((int) 100 * i/50);
+                    Client.chat.progressTheUploadBar((int) 100 * i / 50);
 
                 }
 
@@ -114,12 +113,11 @@ public class SenderThread extends Thread {
                 out.write(byteArray, 0, byteArray.length);
                 out.flush();
                 Client.chat.progressTheUploadBar((int) 100);
-                
 
             } catch (IOException ex) {
                 Logger.getLogger(cwd).log(Level.SEVERE, null, ex);
             }
-            
+
         } catch (IOException ex) {
             Logger.getLogger(SenderThread.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
@@ -132,10 +130,7 @@ public class SenderThread extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(SenderThread.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
-    
-    
-    
+
 }

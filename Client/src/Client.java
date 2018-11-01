@@ -30,33 +30,33 @@ import javax.swing.JOptionPane;
 public class Client {
 
     /**
-     *
+     * The Client's private key
      */
     public static PrivateKey myPrivateKey;
 
     /**
-     *
+     * The Client's public key
      */
     public static PublicKey myPublicKey;
 
     /**
-     *
+     * Boolean that indicates if download is paused
      */
     public static boolean isPaused = false;
     private static String DISCONNECT_MSG = "@";
 
     /**
-     *
+     * the filename that is to be sent
      */
     public static String fileName;
 
     /**
-     *
+     * The prot number used
      */
     public static int portNum = 7999;
 
     /**
-     *
+     * a Boolean that indicates the if the sockets connected succesfully
      */
     public boolean valid_connection = true;
     private final static int port = 8000;
@@ -68,19 +68,17 @@ public class Client {
     static Socket client;
 
     /**
-     *
+     * The Gui
      */
     public static ChatInterface chat;
 
     /**
-     *
+     * The IP of the server
      */
     public static String IP_ad;
-//    public static ObjectOutputStream objectOut;
-//    public static ObjectInputStream objectIn;
 
     /**
-     *
+     * The servers public key
      */
     public static PublicKey serverKey;
 
@@ -101,14 +99,14 @@ public class Client {
         System.out.println("IN MAIN");
     }
 
-    //Connects the client sockect to the server socket. 
-    //Receivees the list of currently connected users and sends username.
-    // It calls method waitForMessage which starts a thread and conctantly looks for incoming messages
-
     /**
+     * Connects the client sockect to the server socket. Receivees the list of
+     * currently connected users and sends username. It calls method
+     * waitForMessage which starts a thread and conctantly looks for incoming
+     * messages
      *
-     * @param serverName
-     * @param usr
+     * @param serverName the name of the server
+     * @param usr the name of the user
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -125,12 +123,12 @@ public class Client {
             }
             outToServer = client.getOutputStream();
             out = new ObjectOutputStream(outToServer);
-            
+
             inFromServer = client.getInputStream();
             in = new ObjectInputStream(inFromServer);
             serverKey = receiveObj();
 
-            String userList_intial = (String)in.readObject();
+            String userList_intial = (String) in.readObject();
             System.out.println("Received initial user list" + userList_intial);
             out.writeObject(myPublicKey);
             out.flush();
@@ -152,25 +150,28 @@ public class Client {
     }
 
     /**
+     * Returns the IP of the server
      *
-     * @return
+     * @return the servers IP
      */
     public static String getIPaddr() {
         return IP_ad;
     }
 
     /**
+     * Returns the name of the server
      *
-     * @return
+     * @return the name of the server
      */
     public static String getServerName() {
         return serverName;
     }
 
     /**
+     * Sends two encrypted messages over to the server with objectStreams
      *
-     * @param msg
-     * @param usr
+     * @param msg the message being send
+     * @param usr the user that sends the message
      * @throws IOException
      */
     public static void sendMessage(String msg, String usr) throws IOException {
@@ -194,11 +195,11 @@ public class Client {
         }
     }
 
-    // Disconnects the user : closes all dataStreams as well as the socket. It also notifies the Server beforehand
-
     /**
+     * Disconnects the user : closes all dataStreams as well as the socket. It
+     * also notifies the Server beforehand
      *
-     * @param usr
+     * @param usr the user that disconnected
      */
     public static void disconnect(String usr) {
         try {
@@ -233,8 +234,9 @@ public class Client {
     }
 
     /**
+     * Receives the servers public key
      *
-     * @return
+     * @return servers key
      * @throws IOException
      */
     public static PublicKey receiveObj() throws IOException {
@@ -244,12 +246,13 @@ public class Client {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
-            return inputFromServer;
+        return inputFromServer;
     }
 
     /**
+     * Receive and decrypts a message from the server.
      *
-     * @return
+     * @return the received message
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -272,12 +275,12 @@ public class Client {
         return inputFromServer;
     }
 
-    //Runs through list of usernames and check if the current username is already take , if so it assigns a new username
-
     /**
+     * Runs through list of usernames and check if the current username is
+     * already take , if so it assigns a new username
      *
-     * @param list
-     * @param usrnm
+     * @param list the list of users to check for duplicates
+     * @param usrnm the username selected
      * @return
      */
     public static boolean checkUsername(String list, String usrnm) {
@@ -293,8 +296,9 @@ public class Client {
     }
 
     /**
+     * Generates a public and private key
      *
-     * @return
+     * @return a key pair
      * @throws NoSuchAlgorithmException
      */
     public static KeyPair generateKeys() throws NoSuchAlgorithmException {
@@ -304,9 +308,10 @@ public class Client {
     }
 
     /**
+     * Encrypts a message with a given key
      *
-     * @param key
-     * @param toEncrypt
+     * @param key the encryption key
+     * @param toEncrypt what to encrypt
      * @return
      * @throws NoSuchAlgorithmException
      * @throws NoSuchPaddingException
@@ -321,9 +326,10 @@ public class Client {
     }
 
     /**
+     * Decrypts the message with my private key
      *
-     * @param toDecrypt
-     * @return
+     * @param toDecrypt what to decrypt
+     * @return th decrypted message
      * @throws NoSuchAlgorithmException
      * @throws NoSuchPaddingException
      * @throws IllegalBlockSizeException
